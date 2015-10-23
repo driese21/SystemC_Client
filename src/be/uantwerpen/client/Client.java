@@ -1,12 +1,10 @@
 package be.uantwerpen.client;
 
 import be.uantwerpen.chat.*;
-import be.uantwerpen.rmiInterfaces.IClientSession;
+import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.rmiInterfaces.*;
 
-import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,9 +16,9 @@ import java.util.ArrayList;
  */
 public class Client extends UnicastRemoteObject {
     private static Client instance;
-    private String username, password, IP;
+    private String username, domain, fullName;
     private int initiatorPort;
-    private ArrayList<ChatSession> sessions;
+    private ArrayList<IChatSession> sessions;
     private ChatInitiator chatInitiator;
     private IClientSession clientSession;
 
@@ -29,58 +27,58 @@ public class Client extends UnicastRemoteObject {
         return instance;
     }
 
-    public static Client getInstance(String username, String password, String IP) throws RemoteException, AlreadyBoundException {
-        if (instance == null || instance.username == null) instance = new Client(username, password, IP);
+    public static Client getInstance(String username, String fullName, IClientSession clientSession) throws RemoteException, AlreadyBoundException {
+        if (instance == null || instance.username == null) instance = new Client(username, fullName, clientSession);
         return instance;
     }
 
     private Client() throws RemoteException, AlreadyBoundException {
         sessions = new ArrayList<>();
-        openPassive();
     }
 
-    private Client(String username, String password, String IP) throws RemoteException, AlreadyBoundException {
+    private Client(String username, String fullName, IClientSession clientSession) throws RemoteException, AlreadyBoundException {
         this();
-        this.username = username;
-        this.password = password;
-        this.IP = IP;
-        this.initiatorPort = 11338;
+        this.username = username.split("@")[0];
+        this.domain = username.split("@")[1];
+        this.fullName = fullName;
+        this.clientSession = clientSession;
+        this.initiatorPort = 11339;
+        System.out.println(this.clientSession.getUsername());
+        openPassive();
     }
 
     public void openPassive() throws RemoteException, AlreadyBoundException {
         chatInitiator = new ChatInitiator(initiatorPort);
-        Registry registry = LocateRegistry.createRegistry(chatInitiator.getPort());
-        try {
+        /*try {
+            Registry registry = LocateRegistry.createRegistry(initiatorPort);
             registry.bind("ChatInitiator", chatInitiator);
         } catch (AlreadyBoundException abe) {
             if (initiatorPort < 11350) { //try again if smaller than 11350
                 initiatorPort++;
                 openPassive();
-            }
-            else throw abe; //something seriously wrong
-        }
+            } else throw abe; //something seriously wrong
+        }*/
+        this.clientSession.setChatInitiator(chatInitiator);
     }
 
-    public ChatSession startSession(ChatSession other) {
-        Chat chat = new Chat();
-        ChatSession cs = new ChatSession(other, chat);
-        sessions.add(cs);
-        return cs;
+    public void startSession(IChatSession other) throws AlreadyBoundException, RemoteException {
+        //Chat chat = new Chat();
+        sessions.add(other);
+        System.out.println("added new chatsession with other");
+        //ChatSession cs = new ChatSession(other, chat);
+        //sessions.add(cs);
     }
 
-    public void startSession(String username) {
-
-        ChatSession chatSession = new ChatSession(); //start empty session
+    public void startSession(String username) throws ClientNotOnlineException, RemoteException, AlreadyBoundException {
+        ChatSession chs = new ChatSession();
+        chs.setChat(new Chat());
+        clientSession.startChatSession(username, chs);
     }
 
-    public void addClientSession(int port) throws NotBoundException, MalformedURLException, RemoteException {
-        IClientSession clientSession = (IClientSession) Naming.lookup("//" + "127.0.0.1:" + port + "/ClientSession");
-        this.clientSession = clientSession;
-        clientSession.getOtherUsers().forEach(o -> System.out.println(o));
-    }
-
-    public ArrayList<ChatSession> getSessions() {
-        return sessions;
+    public void sendMessage(String msg) throws RemoteException, InterruptedException {
+        Message message = new Message(msg, username);
+        System.out.println(message.toString());
+        sessions.get(0).newMessage(message);
     }
 
     public String getUsername() {

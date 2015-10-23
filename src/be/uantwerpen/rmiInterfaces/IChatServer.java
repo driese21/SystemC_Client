@@ -1,6 +1,7 @@
 package be.uantwerpen.rmiInterfaces;
 
 import be.uantwerpen.client.Client;
+import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 
 import java.rmi.AlreadyBoundException;
@@ -13,8 +14,7 @@ import java.util.ArrayList;
  */
 public interface IChatServer extends Remote {
     ArrayList<String> showHome(String username) throws RemoteException;
-    IClientSession register(String username, String password) throws RemoteException, AlreadyBoundException, InvalidCredentialsException;
+    IClientSession register(String username, String password, String fullName) throws RemoteException, AlreadyBoundException, InvalidCredentialsException;
     IClientSession login(String username, String password) throws RemoteException, AlreadyBoundException, InvalidCredentialsException;
-    Client search(String username, boolean online) throws RemoteException;
-    ArrayList<Client> search(boolean online) throws RemoteException;
+    //ArrayList<Client> search(boolean online) throws RemoteException;
 }

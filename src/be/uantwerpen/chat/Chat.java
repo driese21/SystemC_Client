@@ -1,5 +1,6 @@
 package be.uantwerpen.chat;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -13,9 +14,8 @@ public class Chat {
         this.messages = new ArrayBlockingQueue<>(100);
     }
 
-    public synchronized void addMessage(String msg, String username) throws InterruptedException {
-        Message message = new Message(msg, username);
-        messages.put(message);
+    public synchronized void addMessage(Message message) throws InterruptedException, RemoteException {
+        messages.put(new Message(message));
     }
 
     private void updateClient() {

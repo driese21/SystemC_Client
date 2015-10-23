@@ -1,6 +1,8 @@
 package be.uantwerpen.consoleManager;
 
+import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
+import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.rmiInterfaces.IChatServer;
 import be.uantwerpen.rmiInterfaces.IClientSession;
@@ -20,7 +22,7 @@ public class ConsoleManager {
     private Client client;
     IChatServer iChatServer;
 
-    public ConsoleManager() throws AlreadyBoundException, IOException, InvalidCredentialsException {
+    public ConsoleManager() throws AlreadyBoundException, IOException, InvalidCredentialsException, ClientNotOnlineException, InterruptedException {
         this.client = Client.getInstance();
         initiateConnection();
         interact();
@@ -38,8 +40,10 @@ public class ConsoleManager {
         }
     }
 
-    public void interact() throws IOException, AlreadyBoundException, InvalidCredentialsException {
-        IClientSession ics = iChatServer.register("Dries", "hello");
-
+    public void interact() throws IOException, AlreadyBoundException, InvalidCredentialsException, ClientNotOnlineException, InterruptedException {
+        IClientSession ics = iChatServer.register("Dries@1337.com", "hello", "Dries Eestermans");
+        client = Client.getInstance("Dries@1337.com", "Dries Eestermans", ics);
+        client.startSession("Dries");
+        client.sendMessage("Hey man");
     }
 }
