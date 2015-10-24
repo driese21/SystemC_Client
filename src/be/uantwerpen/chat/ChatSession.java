@@ -1,7 +1,6 @@
 package be.uantwerpen.chat;
 
-import be.uantwerpen.client.Client;
-import be.uantwerpen.rmiInterfaces.IChatListener;
+import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 
 import java.rmi.RemoteException;
@@ -13,26 +12,45 @@ import java.util.ArrayList;
  */
 public class ChatSession extends UnicastRemoteObject implements IChatSession {
     private Chat chat;
-    private ArrayList<IChatListener> listeners;
+    private ArrayList<IChatParticipator> participators;
+    private String host;
+    private String chatName;
 
     public ChatSession() throws RemoteException {
-        listeners = new ArrayList<>();
+        chat = new Chat();
+        participators = new ArrayList<>();
     }
 
-    public ChatSession(ChatSession other, Chat chat) throws RemoteException {
+    public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
-        this.chat = chat;
+        participators.add(participator);
+        host = participator.getName();
     }
 
     @Override
-    public synchronized boolean newMessage(Message msg) throws RemoteException, InterruptedException {
-        System.out.println(msg);
-        chat.addMessage(msg);
+    public synchronized boolean newMessage(Message message) throws RemoteException, InterruptedException {
+        System.out.println(message.toString());
+        chat.addMessage(message);
         return true;
     }
 
-    public synchronized void addListener(IChatListener listener) {
-        listeners.add(listener);
+    @Override
+    public boolean addParticipator(IChatParticipator participator) throws RemoteException {
+        for (IChatParticipator cp : participators)
+            if (cp.getName().equalsIgnoreCase(participator.getName())) return true; //already in chat
+        //not in the list yet, so continue adding the new participator
+        participators.add(participator);
+        return true;
+    }
+
+    @Override
+    public String getChatName() throws RemoteException {
+        return chatName;
+    }
+
+    @Override
+    public void setChatName(String chatName) throws RemoteException {
+        this.chatName = chatName;
     }
 
     public void setChat(Chat chat) {

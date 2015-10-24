@@ -6,10 +6,10 @@ import be.uantwerpen.rmiInterfaces.*;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Dries on 16/10/2015.
@@ -18,7 +18,7 @@ public class Client extends UnicastRemoteObject {
     private static Client instance;
     private String username, domain, fullName;
     private int initiatorPort;
-    private ArrayList<IChatSession> sessions;
+    private HashMap<IChatSession, IChatParticipator> sessions;
     private ChatInitiator chatInitiator;
     private IClientSession clientSession;
 
@@ -33,7 +33,7 @@ public class Client extends UnicastRemoteObject {
     }
 
     private Client() throws RemoteException, AlreadyBoundException {
-        sessions = new ArrayList<>();
+        sessions = new HashMap<>();
     }
 
     private Client(String username, String fullName, IClientSession clientSession) throws RemoteException, AlreadyBoundException {
@@ -49,36 +49,50 @@ public class Client extends UnicastRemoteObject {
 
     public void openPassive() throws RemoteException, AlreadyBoundException {
         chatInitiator = new ChatInitiator(initiatorPort);
-        /*try {
-            Registry registry = LocateRegistry.createRegistry(initiatorPort);
-            registry.bind("ChatInitiator", chatInitiator);
-        } catch (AlreadyBoundException abe) {
-            if (initiatorPort < 11350) { //try again if smaller than 11350
-                initiatorPort++;
-                openPassive();
-            } else throw abe; //something seriously wrong
-        }*/
         this.clientSession.setChatInitiator(chatInitiator);
     }
 
-    public void startSession(IChatSession other) throws AlreadyBoundException, RemoteException {
-        //Chat chat = new Chat();
-        sessions.add(other);
-        System.out.println("added new chatsession with other");
-        //ChatSession cs = new ChatSession(other, chat);
-        //sessions.add(cs);
+    /**
+     * This method gets called by the ClientSession and should be considered the 'other' client
+     * @param other the chatsession we get invited too
+     * @throws AlreadyBoundException
+     * @throws RemoteException
+     */
+    public synchronized boolean startSession(IChatSession other) throws AlreadyBoundException, RemoteException {
+        ChatParticipator chatParticipator = new ChatParticipator(username);
+        sessions.put(other, chatParticipator);
+        chatParticipator.addChatSession(other);
+        return other.addParticipator(chatParticipator);
     }
 
+    /**
+     * This method gets used to start a chatsession with another user
+     * @param username the other persons username
+     * @throws ClientNotOnlineException
+     * @throws RemoteException
+     * @throws AlreadyBoundException
+     */
     public void startSession(String username) throws ClientNotOnlineException, RemoteException, AlreadyBoundException {
-        ChatSession chs = new ChatSession();
-        chs.setChat(new Chat());
-        clientSession.startChatSession(username, chs);
+        ChatParticipator chatParticipator = new ChatParticipator(username);
+        ChatSession chs = new ChatSession(chatParticipator);
+        sessions.put(chs, chatParticipator);
+        chs.addParticipator(chatParticipator);
+        chs.setChatName("MLG PARTY CHAT");
+        if (clientSession.invite(username, chs)) chatParticipator.addChatSession(chs);
     }
 
     public void sendMessage(String msg) throws RemoteException, InterruptedException {
-        Message message = new Message(msg, username);
-        System.out.println(message.toString());
-        sessions.get(0).newMessage(message);
+        Iterator it = sessions.entrySet().iterator();
+        System.out.println("*** " + this.username + " ***");
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            IChatSession cs1 = (IChatSession)pair.getKey();
+            ChatParticipator cp1 = (ChatParticipator)pair.getValue();
+            System.out.println(cs1.getChatName());
+            System.out.println(cp1.getName());
+            cp1.pushMessage(msg);
+        }
+
     }
 
     public String getUsername() {

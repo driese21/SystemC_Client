@@ -9,6 +9,9 @@ import java.rmi.RemoteException;
 public class Message extends UnicastRemoteObject {
     private String message, username;
 
+    public Message() throws RemoteException {
+    }
+
     public Message(String message, String username) throws RemoteException {
         this.message = message;
         this.username = username;

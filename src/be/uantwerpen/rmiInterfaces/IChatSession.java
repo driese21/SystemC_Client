@@ -10,5 +10,7 @@ import java.rmi.RemoteException;
  */
 public interface IChatSession extends Remote {
     boolean newMessage(Message msg) throws RemoteException, InterruptedException;
-    void addListener(IChatListener listener) throws RemoteException;
+    boolean addParticipator(IChatParticipator participator) throws RemoteException;
+    String getChatName() throws RemoteException;
+    void setChatName(String chatName) throws RemoteException;
 }

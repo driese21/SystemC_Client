@@ -22,9 +22,8 @@ public class ChatInitiator extends UnicastRemoteObject implements IChatInitiator
     }
 
     @Override
-    public void initialHandshake(IChatSession otherChatSession) throws RemoteException, AlreadyBoundException {
-        System.out.println("someone wants to chat");
-        Client.getInstance().startSession(otherChatSession);
+    public boolean initialHandshake(IChatSession otherChatSession) throws RemoteException, AlreadyBoundException {
+        return Client.getInstance().startSession(otherChatSession);
     }
 
     public int getPort() {
