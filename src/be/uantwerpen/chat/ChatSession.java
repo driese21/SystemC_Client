@@ -23,24 +23,45 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
-        participators.add(participator);
+        addParticipator(participator);
         host = participator.getName();
     }
 
     @Override
     public synchronized boolean newMessage(Message message) throws RemoteException, InterruptedException {
-        System.out.println(message.toString());
         chat.addMessage(message);
+        notifyParticipators();
         return true;
     }
 
     @Override
-    public boolean addParticipator(IChatParticipator participator) throws RemoteException {
+    public void notifyParticipators() throws RemoteException {
+        for (IChatParticipator cp : participators) {
+            cp.notifyListener();
+        }
+    }
+
+    @Override
+    public synchronized boolean addParticipator(IChatParticipator participator) throws RemoteException {
+        System.out.println("*** PEOPLE IN CHAT ***");
+        for (IChatParticipator cp : participators) {
+            System.out.println(cp.getName());
+        }
+        System.out.println();
         for (IChatParticipator cp : participators)
-            if (cp.getName().equalsIgnoreCase(participator.getName())) return true; //already in chat
+            if (cp.getName().equalsIgnoreCase(participator.getName())) {
+                System.out.println(cp.getName() + " already in chat...");
+                return true; //already in chat
+            }
         //not in the list yet, so continue adding the new participator
         participators.add(participator);
+        System.out.println("Adding " + participator.getName());
         return true;
+    }
+
+    @Override
+    public String getChatMessages() throws RemoteException {
+        return chat.toString();
     }
 
     @Override

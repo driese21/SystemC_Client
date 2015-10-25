@@ -21,8 +21,11 @@ import java.util.ArrayList;
 public class ConsoleManager {
     private Client client;
     IChatServer iChatServer;
+    private String username, ip;
 
-    public ConsoleManager() throws AlreadyBoundException, IOException, InvalidCredentialsException, ClientNotOnlineException, InterruptedException {
+    public ConsoleManager(String username, String ip) throws AlreadyBoundException, IOException, InvalidCredentialsException, ClientNotOnlineException, InterruptedException {
+        this.username = username;
+        this.ip = ip;
         this.client = Client.getInstance();
         initiateConnection();
         interact();
@@ -30,7 +33,7 @@ public class ConsoleManager {
 
     private void initiateConnection() {
         try {
-            iChatServer = (IChatServer) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+            iChatServer = (IChatServer) Naming.lookup("//" + ip + ":11337" + "/ChatServer");
         } catch (NotBoundException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {
@@ -41,9 +44,11 @@ public class ConsoleManager {
     }
 
     public void interact() throws IOException, AlreadyBoundException, InvalidCredentialsException, ClientNotOnlineException, InterruptedException {
-        IClientSession ics = iChatServer.register("Dries@1337.com", "hello", "Dries Eestermans");
-        client = Client.getInstance("Dries@1337.com", "Dries Eestermans", ics);
-        client.startSession("Dries");
-        client.sendMessage("Hey man");
+        IClientSession ics = iChatServer.register(username +"@1337.com", "hello", "Dries Eestermans");
+        client = Client.getInstance(username +"@1337.com", "Dries Eestermans", ics);
+        if (username.equalsIgnoreCase("dries")) {
+            client.startSession("Jef");
+            client.sendMessage("Hey man");
+        }
     }
 }

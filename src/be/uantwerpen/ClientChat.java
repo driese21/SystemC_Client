@@ -14,7 +14,8 @@ public class ClientChat {
     public static void main(String[] args) {
         try {
             try {
-                ConsoleManager cm = new ConsoleManager();
+                System.out.println(args[0] + "  " + args[1]);
+                ConsoleManager cm = new ConsoleManager(args[0],args[1]);
             } catch (ClientNotOnlineException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {

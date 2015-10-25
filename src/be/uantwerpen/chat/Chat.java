@@ -19,6 +19,13 @@ public class Chat extends UnicastRemoteObject {
         messages.add(message);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        messages.forEach(sb::append);
+        return sb.toString();
+    }
+
     private void updateClient() {
         System.out.println("Updating client ... (this is a lie)");
     }

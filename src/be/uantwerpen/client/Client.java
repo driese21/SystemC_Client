@@ -59,10 +59,12 @@ public class Client extends UnicastRemoteObject {
      * @throws RemoteException
      */
     public synchronized boolean startSession(IChatSession other) throws AlreadyBoundException, RemoteException {
+        System.out.println("[INVITED CLIENT]Client");
         ChatParticipator chatParticipator = new ChatParticipator(username);
-        sessions.put(other, chatParticipator);
         chatParticipator.addChatSession(other);
-        return other.addParticipator(chatParticipator);
+        System.out.println("[INVITED CLIENT] Adding myself to participator list " + other.addParticipator(chatParticipator));
+        sessions.put(other, chatParticipator);
+        return true;
     }
 
     /**
@@ -73,12 +75,14 @@ public class Client extends UnicastRemoteObject {
      * @throws AlreadyBoundException
      */
     public void startSession(String username) throws ClientNotOnlineException, RemoteException, AlreadyBoundException {
-        ChatParticipator chatParticipator = new ChatParticipator(username);
+        ChatParticipator chatParticipator = new ChatParticipator(this.username);
         ChatSession chs = new ChatSession(chatParticipator);
         sessions.put(chs, chatParticipator);
-        chs.addParticipator(chatParticipator);
         chs.setChatName("MLG PARTY CHAT");
-        if (clientSession.invite(username, chs)) chatParticipator.addChatSession(chs);
+        if (clientSession.invite(username, chs)) {
+            //if invite was successfull, add ourselves
+            chatParticipator.addChatSession(chs);
+        }
     }
 
     public void sendMessage(String msg) throws RemoteException, InterruptedException {
