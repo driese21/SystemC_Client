@@ -1,6 +1,5 @@
 package be.uantwerpen.consoleManager;
 
-import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
@@ -13,7 +12,6 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 /**
  * Created by Dries on 17/10/2015.
@@ -47,8 +45,8 @@ public class ConsoleManager {
         IClientSession ics = iChatServer.register(username +"@1337.com", "hello", "Dries Eestermans");
         client = Client.getInstance(username +"@1337.com", "Dries Eestermans", ics);
         if (username.equalsIgnoreCase("dries")) {
-            client.startSession("Jef");
-            client.sendMessage("Hey man");
+            client.invite("dries");
+            client.sendMessage("hoe gaat ie joh");
         }
     }
 }

@@ -1,5 +1,6 @@
 package be.uantwerpen.chat;
 
+import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 
@@ -23,40 +24,35 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
-        addParticipator(participator);
+        joinSession(participator);
         host = participator.getName();
     }
 
     @Override
     public synchronized boolean newMessage(Message message) throws RemoteException, InterruptedException {
         chat.addMessage(message);
-        notifyParticipators();
+        notifyParticipators(ChatNotificationType.NEWMESSAGE);
         return true;
     }
 
     @Override
-    public void notifyParticipators() throws RemoteException {
-        for (IChatParticipator cp : participators) {
-            cp.notifyListener();
-        }
+    public void notifyParticipators(ChatNotificationType cnt) throws RemoteException {
+        participators.forEach((participator) -> {
+            try { participator.notifyListener(cnt); }
+            catch (RemoteException e) { e.printStackTrace(); }
+        });
     }
 
     @Override
-    public synchronized boolean addParticipator(IChatParticipator participator) throws RemoteException {
-        System.out.println("*** PEOPLE IN CHAT ***");
-        for (IChatParticipator cp : participators) {
-            System.out.println(cp.getName());
-        }
-        System.out.println();
+    public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator cp : participators)
-            if (cp.getName().equalsIgnoreCase(participator.getName())) {
-                System.out.println(cp.getName() + " already in chat...");
+            if (cp.getName().equalsIgnoreCase(participator.getName()))
                 return true; //already in chat
-            }
         //not in the list yet, so continue adding the new participator
-        participators.add(participator);
-        System.out.println("Adding " + participator.getName());
-        return true;
+        if (participators.add(participator)) {
+            notifyParticipators(ChatNotificationType.USERJOINED);
+            return true;
+        } else return false;
     }
 
     @Override

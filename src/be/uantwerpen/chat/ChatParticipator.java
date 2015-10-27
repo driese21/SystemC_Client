@@ -1,5 +1,6 @@
 package be.uantwerpen.chat;
 
+import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 
@@ -26,7 +27,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     }
 
     @Override
-    public void notifyListener() throws RemoteException {
+    public void notifyListener(ChatNotificationType cnt) throws RemoteException {
         System.out.println(chatSession.getChatName());
         System.out.println(chatSession.getChatMessages());
     }
