@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class ChatSession extends UnicastRemoteObject implements IChatSession {
     private Chat chat;
     private ArrayList<IChatParticipator> participators;
-    private String host;
+    private IChatParticipator host;
     private String chatName;
 
     public ChatSession() throws RemoteException {
@@ -24,35 +24,66 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
-        joinSession(participator);
-        host = participator.getName();
+        joinSession(participator, true);
+        host = participator;
     }
 
     @Override
-    public synchronized boolean newMessage(Message message) throws RemoteException, InterruptedException {
+    public synchronized boolean newMessage(String msg, String username) throws RemoteException, InterruptedException {
+        Message message = new Message(msg, username);
         chat.addMessage(message);
-        notifyParticipators(ChatNotificationType.NEWMESSAGE);
+        notifyParticipators(ChatNotificationType.NEWMESSAGE, message);
         return true;
     }
 
     @Override
+    public void notifyParticipators(ChatNotificationType cnt, Message msg) throws RemoteException {
+        for (IChatParticipator participator : participators) {
+            participator.notifyListener(cnt, msg);
+        }
+    }
+
+    @Override
+    public void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
+        for (IChatParticipator participator : participators) {
+            participator.notifyListener(cnt, newParticipator);
+        }
+    }
+
+    /*@Override
     public void notifyParticipators(ChatNotificationType cnt) throws RemoteException {
-        participators.forEach((participator) -> {
+        for (IChatParticipator participator : participators) {
+            participator.notifyListener(cnt);
+        }
+        *//*participators.forEach((participator) -> {
             try { participator.notifyListener(cnt); }
             catch (RemoteException e) { e.printStackTrace(); }
-        });
-    }
+        });*//*
+    }*/
 
     @Override
     public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator cp : participators)
             if (cp.getName().equalsIgnoreCase(participator.getName()))
                 return true; //already in chat
+        return false;
+    }
+
+    @Override
+    public synchronized boolean joinSession(IChatParticipator participator, boolean silent) throws RemoteException {
+        if (joinSession(participator)) return true;
+        System.out.println(participator.getName() + (silent ? " is trying to sneak in..." : " is joining"));
         //not in the list yet, so continue adding the new participator
         if (participators.add(participator)) {
-            notifyParticipators(ChatNotificationType.USERJOINED);
+            if (silent) return true;
+            notifyParticipators(ChatNotificationType.USERJOINED, participator);
             return true;
         } else return false;
+    }
+
+    @Override
+    public IChatParticipator getHost() throws RemoteException {
+        return host;
     }
 
     @Override
@@ -70,7 +101,28 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         this.chatName = chatName;
     }
 
+    @Override
+    public boolean hostQuit(IChatParticipator newHost) throws RemoteException {
+        if (!participators.remove(host)) return false;
+        host = newHost;
+        //notifyParticipators(ChatNotificationType.NEWHOST);
+        return true;
+    }
+
+    @Override
+    public ArrayList<IChatParticipator> getOtherParticipators() throws RemoteException {
+        System.out.println("Participators length: " + participators.size());
+        return participators;
+    }
+
+    @Override
+    public void setParticipators(ArrayList<IChatParticipator> participators) throws RemoteException {
+        this.participators = participators;
+    }
+
     public void setChat(Chat chat) {
         this.chat = chat;
     }
+
+
 }

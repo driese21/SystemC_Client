@@ -45,8 +45,19 @@ public class ConsoleManager {
         IClientSession ics = iChatServer.register(username +"@1337.com", "hello", "Dries Eestermans");
         client = Client.getInstance(username +"@1337.com", "Dries Eestermans", ics);
         if (username.equalsIgnoreCase("dries")) {
-            client.invite("dries");
-            client.sendMessage("hoe gaat ie joh");
+            client.invite("jef");
+            try {
+                client.sendMessage("hoe gaat ie joh");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (username.equalsIgnoreCase("jef")) {
+            Thread.sleep(10000);
+            try {
+                client.sendMessage("test recovery");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

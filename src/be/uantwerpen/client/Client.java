@@ -62,7 +62,7 @@ public class Client extends UnicastRemoteObject {
         System.out.println("[INVITED CLIENT]Client");
         ChatParticipator chatParticipator = new ChatParticipator(username);
         chatParticipator.addChatSession(other);
-        System.out.println("[INVITED CLIENT] Adding myself to participator list " + other.joinSession(chatParticipator));
+        System.out.println("[INVITED CLIENT] Adding myself to participator list " + other.joinSession(chatParticipator, false));
         sessions.put(other, chatParticipator);
         return true;
     }
@@ -77,23 +77,23 @@ public class Client extends UnicastRemoteObject {
     public void invite(String username) throws ClientNotOnlineException, RemoteException, AlreadyBoundException {
         ChatParticipator chatParticipator = new ChatParticipator(this.username);
         ChatSession chs = new ChatSession(chatParticipator);
-        sessions.put(chs, chatParticipator);
-        chs.setChatName("MLG PARTY CHAT");
+        chs.setChatName(Client.getInstance().fullName);
+        chatParticipator.addChatSession(chs);
         if (clientSession.invite(username, chs)) {
-            //if invite was successfull, add ourselves
-            chatParticipator.addChatSession(chs);
+            //if invite was successfull, remember it, otherwise garbage
+            sessions.put(chs, chatParticipator);
         }
     }
 
-    public void sendMessage(String msg) throws RemoteException, InterruptedException {
+    public void sendMessage(String msg) throws Exception {
         Iterator it = sessions.entrySet().iterator();
-        System.out.println("*** " + this.username + " ***");
+        System.out.println("["+this.username+"]Sending message");
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             IChatSession cs1 = (IChatSession)pair.getKey();
             ChatParticipator cp1 = (ChatParticipator)pair.getValue();
-            System.out.println(cs1.getChatName());
-            System.out.println(cp1.getName());
+            //System.out.println(cs1.getChatName());
+            //System.out.println(cp1.getName());
             cp1.pushMessage(msg);
         }
 

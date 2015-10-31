@@ -22,6 +22,14 @@ public class Message extends UnicastRemoteObject {
         this.username = message.username;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     @Override
     public String toString() {
         return "Message{" +

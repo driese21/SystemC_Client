@@ -6,30 +6,67 @@ import be.uantwerpen.rmiInterfaces.IChatSession;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 /**
  * Created by Dries on 23/10/2015.
  */
 public class ChatParticipator extends UnicastRemoteObject implements IChatParticipator {
     private String username;
-    private String newMessage;
     private IChatSession chatSession;
+    private ChatSession clonedChatSession;
+    private ArrayList<IChatParticipator> otherParticipators;
+    private IChatParticipator host; //chatsession host
+    private int pushRetries;
 
-    public ChatParticipator() throws RemoteException { }
+    public ChatParticipator() throws RemoteException {
+        this.otherParticipators = new ArrayList<>();
+        this.clonedChatSession = new ChatSession();
+    }
 
     public ChatParticipator(String username) throws RemoteException {
+        this();
         this.username = username;
     }
 
+    /**
+     * This functions gets invoked on the invited client
+     * @param chatSession
+     * @throws RemoteException
+     */
     @Override
     public void addChatSession(IChatSession chatSession) throws RemoteException {
         this.chatSession = chatSession;
+        this.host = chatSession.getHost();
+        System.out.println("ADDING CHATSESSION, host is " + chatSession.getHost().getName());
+        System.out.println("Chatsession name is " + chatSession.getChatName());
     }
 
     @Override
-    public void notifyListener(ChatNotificationType cnt) throws RemoteException {
-        System.out.println(chatSession.getChatName());
-        System.out.println(chatSession.getChatMessages());
+    public synchronized void notifyListener(ChatNotificationType cnt, Message msg) throws RemoteException {
+        if (cnt == ChatNotificationType.NEWMESSAGE && msg != null) {
+            System.out.println("Received new message from " + msg.getUsername() + ": " + msg.getMessage());
+        } else System.out.println("Wrong notification, not a new chat...");
+    }
+
+    @Override
+    public synchronized void notifyListener(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
+        if (newParticipator != null) {
+            if (cnt == ChatNotificationType.USERJOINED) {
+                if (!participatorsExists(newParticipator)) otherParticipators.add(newParticipator);
+                else System.out.println("ChatParticipator " + newParticipator.getName() + " is already registered...");
+            } else if (cnt == ChatNotificationType.USERLEFT) {
+                if (participatorsExists(newParticipator)) otherParticipators.remove(newParticipator);
+                else System.out.println("doesn't exists, can't remove...");
+            }
+        }
+    }
+
+    private boolean participatorsExists(IChatParticipator participator) throws RemoteException {
+        for (IChatParticipator chatParticipator : otherParticipators) {
+            if (chatParticipator.getName().equalsIgnoreCase(participator.getName())) return true;
+        }
+        return false;
     }
 
     @Override
@@ -38,8 +75,78 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     }
 
     @Override
-    public void pushMessage(String msg) throws RemoteException, InterruptedException {
-        Message message = new Message(msg, getName());
-        chatSession.newMessage(message);
+    public void pushMessage(String msg) throws Exception {
+        try {
+            chatSession.newMessage(msg, getName());
+            pushRetries = 0;
+        } catch (RemoteException re) {
+            if (pushRetries < 5) { //try again 5 times
+                Thread.sleep(1000);
+                pushRetries++;
+                pushMessage(msg);
+            } else { //still can't reach host, let's notify the server
+                IChatParticipator server = null;
+                //look for the server
+                for (IChatParticipator participator : clonedChatSession.getOtherParticipators()) {
+                    if (participator.isServer()) { server = participator; break; }
+                }
+                if (server == null) throw new RemoteException("Server not found");
+                if (!server.hostChat(this)) throw new RemoteException("Host was still reachable from server");
+                if (!otherParticipators.remove(host)) throw new Exception("Problem removing host..."); //remove the host first before announcing new chatsession
+                clonedChatSession.hostQuit(this);
+                //update other participators that I am new host
+                for (IChatParticipator other : otherParticipators) {
+                    if (!other.getName().equalsIgnoreCase(getName())) other.hostChanged(this,clonedChatSession);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isServer() throws RemoteException {
+        return false;
+    }
+
+    /**
+     * Will throw exception when participator is no longer alive
+     * @return will return true when participator is alive, otherwise throw error
+     * @throws RemoteException
+     */
+    @Override
+    public boolean alive() throws RemoteException {
+        return true;
+    }
+
+    /**
+     * Server-only functionality
+     * @param newHost
+     * @return
+     * @throws RemoteException
+     */
+    @Override
+    public boolean hostChat(IChatParticipator newHost) throws RemoteException {
+        return false;
+    }
+
+    /**
+     * Will update the local clone of the chat session based on the update
+     * @param cnt notification type
+     * @throws RemoteException
+     */
+    @Override
+    public synchronized void cloneSession(ChatNotificationType cnt) throws RemoteException {
+        if (clonedChatSession == null) return; //still need to capture this
+    }
+
+    /**
+     * Update the chatsession to the newly hosted one
+     * @param newHost the chatparticipator that will now host the chatsession
+     * @param newSession a reference to the new chatsession of the new host
+     * @throws RemoteException
+     */
+    @Override
+    public void hostChanged(IChatParticipator newHost, IChatSession newSession) throws RemoteException {
+        this.host = newHost;
+        this.chatSession = newSession;
     }
 }
