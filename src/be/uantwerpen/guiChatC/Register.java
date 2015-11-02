@@ -1,8 +1,11 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.rmiInterfaces.IChatServer;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.Naming;
 
 /**
  * Created by Michiel on 30/10/2015.
@@ -33,14 +36,31 @@ public class Register extends JFrame {
         btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*
-                TO DO:  Gegevens lezen en vergelijken met de server
-                        Als de gegevens al bestaan: gewoon de gebruiker inloggen
-                        Als de gegevens niet bestaan: nieuwe gebruiker maken en inloggen
-                 */
-                dispose();
-            }
-        });
-    }
+                //gegevens lezen
+                String fullName = txtFullName.getText();
+                String user = txtUserName.getText();
+                String pw = txtPw.getText();
+                String confirm = txtConfirmPw.getText();
 
+                if (user.equals("") | pw.equals("")| fullName.equals("")| confirm.equals(""))  {
+                    JOptionPane.showMessageDialog(null,"Voer alle gegevens juist in!");
+                }
+                else if(pw.equals(confirm)){
+                    //registreren
+                    try{
+                        IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
+                        cs.register(user, pw, fullName);
+                    }
+                    catch(Exception x){
+                        System.out.println("Client exception" + x.getMessage());
+                        x.printStackTrace();
+                    }
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"De wachtwoorden komen niet overeen!");
+            }
+        }
+    });
+    }
 }
+

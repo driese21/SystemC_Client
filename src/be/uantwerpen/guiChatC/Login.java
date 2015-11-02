@@ -1,8 +1,13 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.chat.ChatSession;
+import be.uantwerpen.rmiInterfaces.IChatServer;
+import be.uantwerpen.rmiInterfaces.IClientSession;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.Naming;
 
 /**
  * Created by Michiel on 30/10/2015.
@@ -31,15 +36,26 @@ public class Login extends JFrame {
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*
-                TO DO:  Gegevens lezen en de gebruiker aanmelden
+                //gegevens lezen
+                String user = txtUserName.getText();
+                String pw = txtPw.getText();
 
-                        nieuwe HomePage openen
-                        //HomePage homepageForm = new HomePage();
+                if (user.equals("") | pw.equals(""))  {
+                    JOptionPane.showMessageDialog(null,"Voer een geldige gebruikersnaam en wachtwoord in!");
+                }
+                else{
+                    //inloggen
+                    try{
+                        IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
+                        cs.login(user,pw);
+                    }
+                    catch(Exception x){
+                        System.out.println("Client exception" + x.getMessage());
+                        x.printStackTrace();
+                    }
 
-                        Als de gegevens niet kloppen: error
-                */
-                dispose();
+                    HomePage homepageForm = new HomePage();
+                }
             }
         });
 
