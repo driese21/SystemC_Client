@@ -6,12 +6,16 @@ import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.rmiInterfaces.IChatServer;
 import be.uantwerpen.rmiInterfaces.IClientSession;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 /**
  * Created by Dries on 17/10/2015.
@@ -48,6 +52,7 @@ public class ConsoleManager {
             client.invite("jef");
             try {
                 client.sendMessage("hoe gaat ie joh");
+                System.exit(0);
             } catch (Exception e) {
                 e.printStackTrace();
             }

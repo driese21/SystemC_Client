@@ -46,7 +46,8 @@ public class Login extends JFrame {
                 else{
                     //inloggen
                     try{
-                        IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
+                        IChatServer cs = (IChatServer) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+                        //IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
                         cs.login(user,pw);
                     }
                     catch(Exception x){

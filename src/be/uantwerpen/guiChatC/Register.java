@@ -48,7 +48,8 @@ public class Register extends JFrame {
                 else if(pw.equals(confirm)){
                     //registreren
                     try{
-                        IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
+                        IChatServer cs = (IChatServer) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+                        //IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
                         cs.register(user, pw, fullName);
                     }
                     catch(Exception x){

@@ -3,6 +3,7 @@ package be.uantwerpen;
 import be.uantwerpen.consoleManager.ConsoleManager;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
+import be.uantwerpen.guiChatC.Login;
 
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
@@ -12,7 +13,8 @@ import java.rmi.AlreadyBoundException;
  */
 public class ClientChat {
     public static void main(String[] args) {
-        try {
+        Login login = new Login();
+        /*try {
             try {
                 System.out.println(args[0] + "  " + args[1]);
                 ConsoleManager cm = new ConsoleManager(args[0],args[1]);
@@ -27,6 +29,6 @@ public class ClientChat {
             e.printStackTrace();
         } catch (InvalidCredentialsException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

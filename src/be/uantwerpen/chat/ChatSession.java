@@ -22,6 +22,13 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         participators = new ArrayList<>();
     }
 
+    public ChatSession(IChatSession chatSession) throws RemoteException {
+        this.chat = new Chat();
+        this.participators = chatSession.getOtherParticipators();
+        this.host = chatSession.getHost();
+        this.chatName = chatSession.getChatName();
+    }
+
     public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
         joinSession(participator, true);
@@ -75,7 +82,6 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         System.out.println(participator.getName() + (silent ? " is trying to sneak in..." : " is joining"));
         //not in the list yet, so continue adding the new participator
         if (participators.add(participator)) {
-            if (silent) return true;
             notifyParticipators(ChatNotificationType.USERJOINED, participator);
             return true;
         } else return false;
