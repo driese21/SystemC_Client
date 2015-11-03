@@ -59,7 +59,7 @@ public class Register extends JFrame {
                         //IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
                         cs.register(user, pwOutput, fullName);
 
-                        HomePage homepageForm = new HomePage();
+                        HomePage homepageForm = new HomePage(user);
                         dispose();
                     }
                     catch(Exception x){
