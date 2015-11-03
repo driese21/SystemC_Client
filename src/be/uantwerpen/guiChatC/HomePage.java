@@ -17,29 +17,36 @@ public class HomePage extends JFrame {
     private JList lstConversation;
     private JPanel pnlRootPanel;
 
-    public HomePage() {
+    private String chatName;
+    private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
+
+    public HomePage(String username) {
+
 
         super("HomePage");
-        String gesprekken[] = {"Michiel","Dries","Sebastiaan","Djamo"};
-        lstConversation =  new JList(gesprekken);
-
+        lstConversation.setListData(gesprekken);
         setContentPane(pnlRootPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
         addListeners();
         setVisible(true);
 
 
     }
 
-    //Actionlisteners voor buttons
+
     public void addListeners(){
+        txtSearchConversation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
         btnAddFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showConfirmDialog(HomePage.this, "Functie addFriend toevoegen");
+                String friendName = JOptionPane.showInputDialog(HomePage.this,"Vul naam vriend in:");
+              //  lstConversation.add(friendName)
             }
         });
 
@@ -57,16 +64,18 @@ public class HomePage extends JFrame {
             }
         });
 
+        //Verander gesprek
         lstConversation.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                JOptionPane.showConfirmDialog(HomePage.this, "Functie chatten toevoegen");
+                JOptionPane.showMessageDialog(HomePage.this,"Je will chatten met: " + lstConversation.getSelectedValue());
+               chatName = lstConversation.getSelectedValue().toString();
+                ChatPage chat = new ChatPage(chatName);
+
+
             }
         });
 
     }
 
-    public void fillList(){
-
-    }
 }
