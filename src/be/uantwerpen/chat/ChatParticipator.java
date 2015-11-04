@@ -81,7 +81,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         return username;
     }
 
-    @Override
+    /*@Override
     public void pushMessage(String msg) throws Exception {
         try {
             chatSession.newMessage(msg, getName());
@@ -114,7 +114,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
                 }
             }
         }
-    }
+    }*/
 
     @Override
     public boolean isServer() throws RemoteException {
@@ -163,5 +163,21 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         this.host = newHost;
         this.chatSession = newSession;
         this.chatSession.joinSession(this, true);
+    }
+
+    public ArrayList<IChatParticipator> getOtherParticipators() {
+        return otherParticipators;
+    }
+
+    public IChatSession getChatSession() {
+        return chatSession;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public ChatSession getClonedChatSession() {
+        return clonedChatSession;
     }
 }

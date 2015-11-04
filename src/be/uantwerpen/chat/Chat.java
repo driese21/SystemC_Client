@@ -15,7 +15,7 @@ public class Chat extends UnicastRemoteObject {
         this.messages = new ArrayList<>(100);
     }
 
-    public synchronized void addMessage(Message message) throws InterruptedException, RemoteException {
+    public synchronized void addMessage(Message message) throws RemoteException {
         messages.add(message);
     }
 

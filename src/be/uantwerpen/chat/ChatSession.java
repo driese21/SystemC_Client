@@ -36,7 +36,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     }
 
     @Override
-    public synchronized boolean newMessage(String msg, String username) throws RemoteException, InterruptedException {
+    public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
         chat.addMessage(message);
         notifyParticipators(ChatNotificationType.NEWMESSAGE, message);

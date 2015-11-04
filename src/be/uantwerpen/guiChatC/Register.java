@@ -1,6 +1,6 @@
 package be.uantwerpen.guiChatC;
 
-import be.uantwerpen.rmiInterfaces.IChatServer;
+import be.uantwerpen.rmiInterfaces.IClientAcceptor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -55,9 +55,9 @@ public class Register extends JFrame {
                 else if(Arrays.equals(pwfPw.getPassword(), pwfConfirmPw.getPassword() )){
                     //registreren
                     try{
-                        IChatServer cs = (IChatServer) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+                        IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
                         //IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
-                        cs.register(user, pwOutput, fullName);
+                        ca.register(user, pwOutput, fullName);
 
                         HomePage homepageForm = new HomePage(user);
                         dispose();

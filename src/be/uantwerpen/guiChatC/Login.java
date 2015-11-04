@@ -1,14 +1,11 @@
 package be.uantwerpen.guiChatC;
 
-import be.uantwerpen.chat.ChatSession;
-import be.uantwerpen.rmiInterfaces.IChatServer;
-import be.uantwerpen.rmiInterfaces.IClientSession;
+import be.uantwerpen.rmiInterfaces.IClientAcceptor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
-import java.util.Arrays;
 
 /**
  * Created by Michiel on 30/10/2015.
@@ -48,9 +45,9 @@ public class Login extends JFrame {
                 else{
                     //inloggen
                     try{
-                        IChatServer cs = (IChatServer) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+                        IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
                         //IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
-                        cs.login(user,pwOutput);
+                        ca.login(user,pwOutput);
 
                         HomePage homepageForm = new HomePage(user);
                     }

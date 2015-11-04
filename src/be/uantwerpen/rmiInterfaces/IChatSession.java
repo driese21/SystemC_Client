@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by Dries on 16/10/2015.
  */
 public interface IChatSession extends Remote {
-    boolean newMessage(String msg, String username) throws RemoteException, InterruptedException;
+    boolean newMessage(String msg, String username) throws RemoteException;
     void notifyParticipators(ChatNotificationType cnt, Message msg) throws RemoteException;
     void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException;
     //void notifyParticipators(ChatNotificationType cnt) throws RemoteException;
