@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
  * Created by Dries on 16/10/2015.
  */
 public class ChatInitiator extends UnicastRemoteObject implements IChatInitiator {
+
     public ChatInitiator() throws RemoteException{
     }
 

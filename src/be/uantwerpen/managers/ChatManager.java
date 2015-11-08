@@ -19,6 +19,12 @@ public class ChatManager {
     private static final int MAXRETRIES = 5;
     private static int pushRetries = 0;
 
+    /**
+     * Invites another user
+     * @param friendName username of the other person
+     * @throws RemoteException
+     * @throws ClientNotOnlineException
+     */
     public static void invite(String friendName) throws RemoteException, ClientNotOnlineException {
         ChatParticipator chatParticipator = new ChatParticipator(Client.getInstance().getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
@@ -30,6 +36,13 @@ public class ChatManager {
         }
     }
 
+    /**
+     * This gets called by ChatInitiator which got an invitation from the ClientSession (server)
+     * which received an invite request from another user, the method above
+     * @param chatSession the chatsession we will be chatting on
+     * @return
+     * @throws RemoteException
+     */
     public static boolean invite(IChatSession chatSession) throws RemoteException {
         System.out.println("[INVITED CLIENT]Client");
         ChatParticipator chatParticipator = new ChatParticipator(Client.getInstance().getUsername());
@@ -39,6 +52,12 @@ public class ChatManager {
         return true;
     }
 
+    /**
+     * This gets called from the UI and sends a message via the ChatParticipator
+     * @param chatParticipator chatparticipator in a specific session
+     * @param msg message we want to send
+     * @throws Exception
+     */
     public static void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
         String username = chatParticipator.getName();
         IChatSession iChatSession = chatParticipator.getChatSession();
@@ -56,6 +75,13 @@ public class ChatManager {
         }
     }
 
+    /**
+     * This gets called from ChatParticipator which received a new notification from a ChatSession
+     * @param cnt type of notification
+     * @param msg reference to the message
+     * @param participator which chatparticipator sent it
+     * @throws Exception
+     */
     public static void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
         if (cnt == ChatNotificationType.NEWMESSAGE) {
             System.out.println("not yet implemented");
@@ -64,6 +90,13 @@ public class ChatManager {
         }
     }
 
+    /**
+     * This gets invoked when the client was not able to send a message after 5 retries (5 seconds)
+     * It calls the server participator and verifies whether it's allowed to take over a session
+     * After which it will notify other participators if it has taken over the session.
+     * @param chatParticipator On which chatparticipator it should try to re-host the session
+     * @throws Exception
+     */
     private static void tryRecoverChat(ChatParticipator chatParticipator) throws Exception {
         System.out.println("host left, trying to take over...");
         IChatParticipator server = null;

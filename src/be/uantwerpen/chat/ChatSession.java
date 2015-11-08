@@ -35,6 +35,13 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         host = participator;
     }
 
+    /**
+     * This gets called by anyone who wants to send a message
+     * @param msg The message
+     * @param username The username of the participator
+     * @return true if the message has been sent
+     * @throws RemoteException
+     */
     @Override
     public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
@@ -43,6 +50,12 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         return true;
     }
 
+    /**
+     * Notifies all participators that a new message has arrived
+     * @param cnt Type of notification
+     * @param msg A message
+     * @throws RemoteException
+     */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, Message msg) throws RemoteException {
         for (IChatParticipator participator : participators) {
@@ -50,6 +63,12 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         }
     }
 
+    /**
+     * Notifies all participators that a user has joined/left
+     * @param cnt Type of notification
+     * @param newParticipator the user who just joined/left
+     * @throws RemoteException
+     */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
         for (IChatParticipator participator : participators) {
@@ -57,17 +76,12 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         }
     }
 
-    /*@Override
-    public void notifyParticipators(ChatNotificationType cnt) throws RemoteException {
-        for (IChatParticipator participator : participators) {
-            participator.notifyListener(cnt);
-        }
-        *//*participators.forEach((participator) -> {
-            try { participator.notifyListener(cnt); }
-            catch (RemoteException e) { e.printStackTrace(); }
-        });*//*
-    }*/
-
+    /**
+     * Used to check if a participator is already in the session
+     * @param participator Said participator
+     * @return true if the user is already in the list, false if it's not
+     * @throws RemoteException
+     */
     @Override
     public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator cp : participators)
@@ -76,6 +90,13 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         return false;
     }
 
+    /**
+     * This gets invoked by a ChatParticipator, who wants to join this ChatSession
+     * @param participator A reference to said ChatParticipator
+     * @param silent If false, it will notify all other users (visibly)
+     * @return true if user successfully joined, false if something went wrong
+     * @throws RemoteException
+     */
     @Override
     public synchronized boolean joinSession(IChatParticipator participator, boolean silent) throws RemoteException {
         if (joinSession(participator)) return true;
@@ -86,7 +107,6 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
             return true;
         } else return false;
     }
-
     @Override
     public IChatParticipator getHost() throws RemoteException {
         return host;
@@ -107,17 +127,21 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         this.chatName = chatName;
     }
 
+    /**
+     * Gets invoked by another ChatParticipator who is re-hosting the ChatSession
+     * @param newHost A reference to the new host
+     * @return true if host has been changed, false if it failed to remove previous host
+     * @throws RemoteException
+     */
     @Override
     public boolean hostQuit(IChatParticipator newHost) throws RemoteException {
         if (!participators.remove(host)) return false;
         host = newHost;
-        //notifyParticipators(ChatNotificationType.NEWHOST);
         return true;
     }
 
     @Override
     public ArrayList<IChatParticipator> getOtherParticipators() throws RemoteException {
-        System.out.println("Participators length: " + participators.size());
         return participators;
     }
 
