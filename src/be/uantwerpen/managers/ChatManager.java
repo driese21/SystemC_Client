@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class ChatManager {
     private static final int MAXRETRIES = 5;
     private static int pushRetries = 0;
+    private static int counter = 0;
 
     /**
      * Invites another user
@@ -25,15 +26,17 @@ public class ChatManager {
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
-    public static void invite(String friendName) throws RemoteException, ClientNotOnlineException {
-        ChatParticipator chatParticipator = new ChatParticipator(Client.getInstance().getUsername());
+    public static int invite(String friendName) throws RemoteException, ClientNotOnlineException {
+        ChatParticipator chatParticipator = new ChatParticipator(counter,Client.getInstance().getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
         if (Client.getInstance().getClientSession().invite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
             Client.getInstance().addSession(chatParticipator);
+            return counter++;
         }
+        return -1;
     }
 
     /**
@@ -45,7 +48,7 @@ public class ChatManager {
      */
     public static boolean invite(IChatSession chatSession) throws RemoteException {
         System.out.println("[INVITED CLIENT]Client");
-        ChatParticipator chatParticipator = new ChatParticipator(Client.getInstance().getUsername());
+        ChatParticipator chatParticipator = new ChatParticipator(counter++, Client.getInstance().getUsername());
         chatParticipator.addChatSession(chatSession);
         System.out.println("[INVITED CLIENT] Adding myself to participator list " + chatSession.joinSession(chatParticipator, false));
         Client.getInstance().addSession(chatParticipator);

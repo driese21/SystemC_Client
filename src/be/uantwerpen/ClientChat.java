@@ -1,19 +1,15 @@
 package be.uantwerpen;
 
-import be.uantwerpen.consoleManager.ConsoleManager;
-import be.uantwerpen.exceptions.ClientNotOnlineException;
-import be.uantwerpen.exceptions.InvalidCredentialsException;
-import be.uantwerpen.guiChatC.Login;
-
-import java.io.IOException;
-import java.rmi.AlreadyBoundException;
+import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.managers.UIManager;
 
 /**
  * Created by Dries on 16/10/2015.
  */
 public class ClientChat {
     public static void main(String[] args) {
-        Login login = new Login();
+        UIManagerInterface manager = new UIManager();
+        //Login login = new Login();
         /*try {
             try {
                 System.out.println(args[0] + "  " + args[1]);

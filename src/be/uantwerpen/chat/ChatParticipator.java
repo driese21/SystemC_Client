@@ -13,6 +13,7 @@ import java.util.ArrayList;
  * Created by Dries on 23/10/2015.
  */
 public class ChatParticipator extends UnicastRemoteObject implements IChatParticipator {
+    private int id;
     private String username, hostName;
     private IChatSession chatSession;
     private ChatSession clonedChatSession;
@@ -24,9 +25,14 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         this.clonedChatSession = new ChatSession();
     }
 
-    public ChatParticipator(String username) throws RemoteException {
+    public ChatParticipator(int id, String username) throws RemoteException {
         this();
+        this.id = id;
         this.username = username;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**

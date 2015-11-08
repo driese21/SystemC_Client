@@ -1,5 +1,6 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.chat.Message;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 
@@ -20,21 +21,19 @@ public class ChatPage extends JFrame {
     private JTextArea txtConversation;
     private JLabel lblInGesprekMet;
 
-
-
     public Client client;
-    public ChatPage(String chatname){
+
+    public ChatPage(String chatname) {
         super(chatname);
         lblInGesprekMet.setText(chatname);
         setContentPane(pnlRootPanel);
         pack();
-      //  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         addListeners();
-
     }
 
-    public void addListeners(){
+    public void addListeners() {
         //Listener voor bericht te versturen
         txtMessage.addActionListener(new ActionListener() {
             @Override
@@ -50,10 +49,10 @@ public class ChatPage extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 try {
-                   String friendName = JOptionPane.showInputDialog(ChatPage.this,"Vul naam vriend in:");
-                   //client.invite(friendName);
+                    String friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
+                    //client.invite(friendName);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(ChatPage.this,ex.getMessage());
+                    JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());
                 }
             }
         });
@@ -64,7 +63,9 @@ public class ChatPage extends JFrame {
                 JOptionPane.showConfirmDialog(ChatPage.this, "Functie leaveConversation toevoegen");
             }
         });
+    }
 
-
+    public void receiveMessage(Message message) {
+        throw new UnsupportedOperationException();
     }
 }

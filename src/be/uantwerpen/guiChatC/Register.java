@@ -1,5 +1,6 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IClientAcceptor;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.Arrays;
  * Created by Michiel on 30/10/2015.
  */
 public class Register extends JFrame {
+    private UIManagerInterface manager;
     private JTextField txtFullName;
     private JButton btnRegister;
     private JTextField txtUserName;
@@ -23,8 +25,9 @@ public class Register extends JFrame {
     private JPasswordField pwfPw;
     private JPasswordField pwfConfirmPw;
 
-    public Register() {
+    public Register(UIManagerInterface manager) {
         super("Nieuwe gebruiker registreren");
+        this.manager = manager;
         setContentPane(pnlRegister);
         pack();
         setVisible(true);
@@ -59,7 +62,8 @@ public class Register extends JFrame {
                         //IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
                         ca.register(user, pwOutput, fullName);
 
-                        HomePage homepageForm = new HomePage(user);
+                        //HomePage homepageForm = new HomePage(user);
+                        manager.openHome(user);
                         dispose();
                     }
                     catch(Exception x){

@@ -1,5 +1,6 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IClientAcceptor;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.rmi.Naming;
  * Created by Michiel on 30/10/2015.
  */
 public class Login extends JFrame {
+    private UIManagerInterface manager;
     private JPanel pnlLogin;
     private JLabel lblLogin;
     private JTextField txtUserName;
@@ -20,8 +22,9 @@ public class Login extends JFrame {
     private JLabel lblPw;
     private JPasswordField pwfPW;
 
-    public Login() {
+    public Login(UIManagerInterface manager) {
         super("Aanmelden");
+        this.manager = manager;
         setContentPane(pnlLogin);
         pack();
         setVisible(true);
@@ -49,7 +52,7 @@ public class Login extends JFrame {
                         //IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
                         ca.login(user,pwOutput);
 
-                        HomePage homepageForm = new HomePage(user);
+                        HomePage homepageForm = new HomePage(manager, user);
                     }
                     catch(Exception x){
                         System.out.println("Client exception" + x.getMessage());
@@ -63,7 +66,8 @@ public class Login extends JFrame {
         btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Register registerForm = new Register();
+                //Register registerForm = new Register();
+                manager.openRegister();
                 dispose();
             }
         });
