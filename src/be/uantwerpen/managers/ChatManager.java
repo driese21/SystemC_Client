@@ -27,7 +27,7 @@ public class ChatManager {
      * @throws ClientNotOnlineException
      */
     public static int invite(String friendName) throws RemoteException, ClientNotOnlineException {
-        ChatParticipator chatParticipator = new ChatParticipator(counter,Client.getInstance().getUsername());
+        ChatParticipator chatParticipator = new ChatParticipator(counter++,Client.getInstance().getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
