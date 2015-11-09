@@ -42,6 +42,7 @@ public class AuthenticationManager implements IAuthenticationManager {
     @Override
     public boolean login(String username, String password) throws InvalidCredentialsException {
         try {
+            System.out.println(username);
             IClientSession ics = clientAcceptor.login(username, password);
             if (ics == null) {
                 System.out.println("hier klopt ook iets niet");

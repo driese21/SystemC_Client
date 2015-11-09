@@ -1,7 +1,7 @@
 package be.uantwerpen.client;
 
 import be.uantwerpen.chat.*;
-import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.rmiInterfaces.*;
 
 import java.rmi.AlreadyBoundException;
@@ -23,7 +23,7 @@ public class Client extends UnicastRemoteObject {
         return instance;
     }
 
-    public static Client getInstance(String username, String fullName, IClientSession clientSession) throws RemoteException {
+    public static Client getInstance(String username, String fullName, IClientSession clientSession) throws RemoteException, InvalidCredentialsException {
         if (instance == null || instance.username == null) instance = new Client(username, fullName, clientSession);
         return instance;
     }
@@ -32,13 +32,21 @@ public class Client extends UnicastRemoteObject {
         sessions = new HashSet<>();
     }
 
-    private Client(String username, String fullName, IClientSession clientSession) throws RemoteException {
+    private Client(String username, String fullName, IClientSession clientSession) throws RemoteException, InvalidCredentialsException {
         this();
-        this.username = username.split("@")[0];
-        this.domain = username.split("@")[1];
+        trySplitUsername(username);
         this.fullName = fullName;
         this.clientSession = clientSession;
         System.out.println(this.clientSession.getUsername());
+    }
+
+    private void trySplitUsername(String username) throws InvalidCredentialsException {
+        try {
+            this.username = username.split("@")[0];
+            this.domain = username.split("@")[1];
+        } catch (ArrayIndexOutOfBoundsException aiooe) {
+            throw new InvalidCredentialsException("Wrong username or domain name");
+        }
     }
 
     public String getUsername() {

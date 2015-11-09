@@ -26,12 +26,12 @@ public class ChatManager {
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
-    public static int invite(String friendName) throws RemoteException, ClientNotOnlineException {
+    public static int sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,Client.getInstance().getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
-        if (Client.getInstance().getClientSession().invite(friendName, chs)) {
+        if (Client.getInstance().getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
             Client.getInstance().addSession(chatParticipator);
             return counter++;
@@ -40,9 +40,9 @@ public class ChatManager {
     }
 
     /**
-     * This gets called by ChatInitiator which got an invitation from the ClientSession (server)
+     * This gets called by ChatInitiator which got invoked by ClientSession on server
      * which received an invite request from another user, the method above
-     * @param chatSession the chatsession we will be chatting on
+     * @param chatSession the ChatSession we will be chatting on
      * @return
      * @throws RemoteException
      */
@@ -57,7 +57,7 @@ public class ChatManager {
 
     /**
      * This gets called from the UI and sends a message via the ChatParticipator
-     * @param chatParticipator chatparticipator in a specific session
+     * @param chatParticipator ChatParticipator in a specific session
      * @param msg message we want to send
      * @throws Exception
      */

@@ -39,7 +39,7 @@ public class UIManager implements UIManagerInterface {
     public void openChat(String chatName){
         //todo Check if this shit is legit or not, replace invite value with proper username
         try {
-            int tempId = cm.invite(chatName);
+            int tempId = cm.sendInvite(chatName);
             if(tempId < 0){
                 JOptionPane.showMessageDialog(null, "Invite niet gelukt!");
             } else{

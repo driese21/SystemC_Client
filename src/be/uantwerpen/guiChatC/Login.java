@@ -1,7 +1,11 @@
 package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.managers.AuthenticationManager;
 import be.uantwerpen.rmiInterfaces.IClientAcceptor;
+import be.uantwerpen.exceptions.InvalidCredentialsException;
+
+import java.rmi.RemoteException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -50,13 +54,15 @@ public class Login extends JFrame {
                     try{
                         IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
                         //IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
-                        ca.login(user,pwOutput);
+                        //ca.login(user,pwOutput);
+                        AuthenticationManager authenticationManager = new AuthenticationManager(ca);
+                        authenticationManager.login(user,pwOutput);
 
                         HomePage homepageForm = new HomePage(manager, user);
-                    }
-                    catch(Exception x){
-                        System.out.println("Client exception" + x.getMessage());
-                        x.printStackTrace();
+                    } catch (Exception exc) {
+                        if (exc instanceof InvalidCredentialsException) {
+                            System.out.println(exc.getMessage());
+                        } else exc.printStackTrace();
                     }
 
                 }
