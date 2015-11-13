@@ -9,6 +9,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * Created by Djamo on 30/10/2015.
@@ -26,11 +28,13 @@ public class HomePage extends JFrame {
 
     private String chatName;
     private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
+    //private ArrayList<String> gesprekken;
 
     public HomePage(UIManagerInterface manager, String username) {
         super("HomePage");
         this.manager = manager;
         lstConversation.setListData(gesprekken);
+        //lstConversation.setListData(gesprekken);
         setContentPane(pnlRootPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

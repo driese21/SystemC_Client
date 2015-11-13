@@ -29,9 +29,7 @@ import java.util.Map;
  * Date: 8/11/2015
  */
 public class UIManager implements UIManagerInterface {
-    //private HashMap<Integer, ChatPage> chatMap = new HashMap<>();
-    private HashMap<IChatParticipator, ChatPage> chatPageHashMap;
-    //private ChatManager cm = new ChatManager();
+    private HashMap<ChatParticipator, ChatPage> chatPageHashMap;
     private IChatManager chatManager;
     private IClientManager clientManager;
     private IAuthenticationManager authenticationManager;
@@ -62,9 +60,9 @@ public class UIManager implements UIManagerInterface {
 
     @Override
     public void openChat(String friendUserName) throws Exception {
-        IChatParticipator chatParticipator = chatManager.sendInvite(friendUserName);
+        ChatParticipator chatParticipator = chatManager.sendInvite(friendUserName);
         if(chatParticipator!=null){
-            ChatPage chat = new ChatPage(chatParticipator.getChatName());
+            ChatPage chat = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
             //chatMap.put(tempId, chat);
             chatPageHashMap.put(chatParticipator, chat);
         } else{
@@ -93,8 +91,8 @@ public class UIManager implements UIManagerInterface {
      * @throws RemoteException
      */
     @Override
-    public void openChat(IChatParticipator chatParticipator) throws RemoteException {
-        ChatPage chatPage = new ChatPage(chatParticipator.getChatName());
+    public void openChat(ChatParticipator chatParticipator) throws RemoteException {
+        ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
         chatPageHashMap.put(chatParticipator, chatPage);
     }
 
@@ -114,7 +112,10 @@ public class UIManager implements UIManagerInterface {
 
     public void receiveMessage(int id, Message message){
         //chatMap.get(id).receiveMessage(message);
-        chatPageHashMap.get(findParticipator(id)).receiveMessage(message);
+
+        //todo fix this
+        //chatPageHashMap.get(findParticipator(id)).receiveMessage(message);
+
         /*Iterator it = chatPageHashMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -153,7 +154,7 @@ public class UIManager implements UIManagerInterface {
 
     //region ChatManager
     @Override
-    public IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+    public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         return chatManager.sendInvite(friendName);
     }
 
@@ -164,13 +165,15 @@ public class UIManager implements UIManagerInterface {
 
     @Override
     public void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
+        System.out.println("Received message from GUI: " + msg);
         chatManager.pushMessage(chatParticipator, msg);
     }
 
     @Override
-    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception {
+    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) {
+        System.out.println("RECEIVED MESSAGE!!");
         if (cnt == ChatNotificationType.NEWMESSAGE) {
-            chatPageHashMap.get(participator.getId()).receiveMessage(msg);
+            chatPageHashMap.get(participator).receiveMessage(msg);
         }
     }
     //endregion

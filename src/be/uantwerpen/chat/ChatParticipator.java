@@ -1,6 +1,7 @@
 package be.uantwerpen.chat;
 
 import be.uantwerpen.enums.ChatNotificationType;
+import be.uantwerpen.interfaces.IChatManager;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
@@ -19,16 +20,18 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     private ChatSession clonedChatSession;
     private ArrayList<IChatParticipator> otherParticipators;
     private IChatParticipator host; //chatsession host
+    private IChatManager chatManager;
 
     public ChatParticipator() throws RemoteException {
         this.otherParticipators = new ArrayList<>();
         this.clonedChatSession = new ChatSession();
     }
 
-    public ChatParticipator(int id, String username) throws RemoteException {
+    public ChatParticipator(int id, String username, IChatManager chatManager) throws RemoteException {
         this();
         this.id = id;
         this.username = username;
+        this.chatManager = chatManager;
     }
 
     public int getId() {
@@ -59,8 +62,8 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     @Override
     public synchronized void notifyListener(ChatNotificationType cnt, IMessage msg) throws RemoteException {
         if (cnt == ChatNotificationType.NEWMESSAGE && msg != null) {
-            System.out.println("Received new message from " + msg.getUsername() + ": " + msg.getMessage());
-        } else System.out.println("Wrong notification, not a new chat...");
+            chatManager.notifyView(cnt, msg, this);
+        }
     }
 
     /**
@@ -179,11 +182,5 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
 
     public ChatSession getClonedChatSession() {
         return clonedChatSession;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        ChatParticipator b = (ChatParticipator) obj;
-        return this.id == b.id;
     }
 }

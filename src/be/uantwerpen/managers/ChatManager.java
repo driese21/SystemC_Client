@@ -34,8 +34,8 @@ public class ChatManager implements IChatManager {
      * @throws ClientNotOnlineException
      */
     @Override
-    public IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
-        ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername());
+    public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+        ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername(), this);
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
@@ -57,7 +57,7 @@ public class ChatManager implements IChatManager {
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
         System.out.println("[INVITED CLIENT]Client");
-        ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername());
+        ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername(), this);
         chatParticipator.addChatSession(chatSession);
         System.out.println("[INVITED CLIENT] Adding myself to participator list " + chatSession.joinSession(chatParticipator, false));
         client.addSession(chatParticipator);
@@ -72,7 +72,7 @@ public class ChatManager implements IChatManager {
      * @throws Exception
      */
     @Override
-    public void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
+    public void pushMessage(ChatParticipator chatParticipator, String msg) throws RemoteException {
         String username = chatParticipator.getName();
         IChatSession iChatSession = chatParticipator.getChatSession();
         try {
@@ -81,11 +81,22 @@ public class ChatManager implements IChatManager {
         } catch (RemoteException re) {
             int maxRetries = 5;
             if (pushRetries < maxRetries) {
-                Thread.sleep(1000);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 pushRetries++;
                 pushMessage(chatParticipator, msg);
             } else {
-                tryRecoverChat(chatParticipator);
+                try {
+                    tryRecoverChat(chatParticipator);
+                } catch (Exception e) {
+                    if (e.getMessage().equalsIgnoreCase("Host was still reachable from server")) {
+                        pushRetries = 0;
+                        pushMessage(chatParticipator, msg);
+                    }
+                }
             }
         }
     }
@@ -98,7 +109,7 @@ public class ChatManager implements IChatManager {
      * @throws Exception
      */
     @Override
-    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception {
+    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) {
         if (cnt == ChatNotificationType.NEWMESSAGE) {
             uiManagerInterface.notifyView(cnt, msg, participator);
         } else if (cnt == ChatNotificationType.USERJOINED || cnt == ChatNotificationType.USERLEFT) {

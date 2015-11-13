@@ -13,11 +13,11 @@ import java.rmi.RemoteException;
  * Created by Dries on 10/11/2015.
  */
 public interface IChatManager {
-    IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException;
+    ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException;
 
     boolean invite(IChatSession chatSession) throws RemoteException;
 
     void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception;
 
-    void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception;
+    void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator);
 }

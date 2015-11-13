@@ -1,5 +1,6 @@
 package be.uantwerpen.interfaces;
 
+import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 
 import java.rmi.RemoteException;
@@ -17,5 +18,5 @@ public interface UIManagerInterface extends IAuthenticationManager, IChatManager
 
     void openChat(String chatName) throws Exception;
 
-    void openChat(IChatParticipator chatParticipator) throws RemoteException;
+    void openChat(ChatParticipator chatParticipator) throws RemoteException;
 }

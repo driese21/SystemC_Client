@@ -1,13 +1,13 @@
 package be.uantwerpen.guiChatC;
 
-import be.uantwerpen.chat.Message;
+import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.client.Client;
-import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.rmiInterfaces.IMessage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 
 /**
@@ -15,6 +15,8 @@ import java.rmi.RemoteException;
  */
 public class ChatPage extends JFrame {
     private UIManagerInterface uiManagerInterface;
+    private ChatParticipator chatParticipator;
+
     private JPanel pnlRootPanel;
     private JButton btnInvite;
     private JButton btnLeaveConversation;
@@ -25,9 +27,10 @@ public class ChatPage extends JFrame {
 
     public Client client;
 
-    public ChatPage(String chatname, UIManagerInterface uiManagerInterface) {
+    public ChatPage(String chatname, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) {
         super(chatname);
         this.uiManagerInterface = uiManagerInterface;
+        this.chatParticipator = chatParticipator;
         lblInGesprekMet.setText(chatname);
         setContentPane(pnlRootPanel);
         pack();
@@ -41,10 +44,11 @@ public class ChatPage extends JFrame {
         txtMessage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //uiManagerInterface.pushMessage();
-                txtConversation.append(txtMessage.getText());
-                txtConversation.append("\n");
-                txtMessage.setText("");
+                try {
+                    uiManagerInterface.pushMessage(chatParticipator, txtMessage.getText());
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -55,7 +59,7 @@ public class ChatPage extends JFrame {
                 try {
                     friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
                     //client.invite(friendName);
-                    manager.sendInvite(friendName);
+                    uiManagerInterface.sendInvite(friendName);
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());
@@ -72,8 +76,12 @@ public class ChatPage extends JFrame {
         });
     }
 
-    public void receiveMessage(IMessage message) throws RemoteException {
-        txtConversation.append(message.getUsername() + ": " + message.getMessage());
-        txtConversation.append("\n");
+    public void receiveMessage(IMessage message) {
+        try {
+            txtConversation.append(message.getUsername() + ": " + message.getMessage());
+            txtConversation.append("\n");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

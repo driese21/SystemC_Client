@@ -19,7 +19,6 @@ public interface IClientSession extends Remote {
     boolean sendInvite(String otherUsername, IChatSession ics) throws RemoteException, ClientNotOnlineException;
     boolean invite(IChatSession ics) throws AlreadyBoundException, RemoteException;
     void setChatInitiator(IChatInitiator ici) throws RemoteException;
-    ArrayList<Client> search(boolean online) throws RemoteException;
     String getUsername() throws RemoteException;
     String getFullname() throws RemoteException;
 }
