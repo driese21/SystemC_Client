@@ -22,6 +22,8 @@ public class HomePage extends JFrame {
     private JList lstConversation;
     private JPanel pnlRootPanel;
 
+    private String friendName;
+
     private String chatName;
     private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
 
@@ -46,22 +48,33 @@ public class HomePage extends JFrame {
         btnAddFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String friendName = JOptionPane.showInputDialog(HomePage.this,"Vul naam vriend in:");
-              //  lstConversation.add(friendName)
+                friendName = JOptionPane.showInputDialog(HomePage.this,"Vul naam vriend in:");
+                try {
+                    manager.addFriend(friendName);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(HomePage.this,ex.getMessage());
+                }
+              // lstConversation.add(friendName)
             }
         });
 
         btnDeleteFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showConfirmDialog(HomePage.this, "Functie deleteFriend toevoegen");
+                friendName = JOptionPane.showInputDialog(HomePage.this,"Vul naam (vroegere) vriend in:");
+                try {
+                    manager.deleteFriend(friendName);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(HomePage.this,ex.getMessage());
+                }
             }
         });
 
         btnLogOff.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showConfirmDialog(HomePage.this, "Functie logOff toevoegen");
+                setVisible(false);
+                dispose();
             }
         });
 

@@ -5,7 +5,11 @@
     <constraints>
       <xy x="96" y="76" width="363" height="308"/>
     </constraints>
-    <properties/>
+    <properties>
+      <alignmentX value="0.5"/>
+      <focusTraversalPolicyProvider value="false"/>
+      <verifyInputWhenFocusTarget value="true"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="2fa37" class="javax.swing.JLabel" binding="lblLogin">

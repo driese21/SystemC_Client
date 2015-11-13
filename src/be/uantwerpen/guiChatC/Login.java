@@ -54,12 +54,10 @@ public class Login extends JFrame {
                     try{
                         manager.login(user, pwInput);
 
-                    } catch (Exception exc) {
-                        if (exc instanceof InvalidCredentialsException) {
-                            System.out.println(exc.getMessage());
-                        } else exc.printStackTrace();
+                    } catch (InvalidCredentialsException ex) {
+                        JOptionPane.showMessageDialog(null,"De gebruiker bestaat nog niet, probeer te registreren!");
+                        System.out.println(ex.getMessage());
                     }
-
                 }
             }
         });

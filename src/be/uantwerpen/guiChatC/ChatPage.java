@@ -3,8 +3,6 @@ package be.uantwerpen.guiChatC;
 import be.uantwerpen.chat.Message;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
-import be.uantwerpen.interfaces.UIManagerInterface;
-import be.uantwerpen.rmiInterfaces.IMessage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -23,6 +21,7 @@ public class ChatPage extends JFrame {
     private JTextField txtMessage;
     private JTextArea txtConversation;
     private JLabel lblInGesprekMet;
+    private String friendName;
 
     public Client client;
 
@@ -54,8 +53,10 @@ public class ChatPage extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 try {
-                    String friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
+                    friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
                     //client.invite(friendName);
+                    manager.sendInvite(friendName);
+
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());
                 }
@@ -66,6 +67,7 @@ public class ChatPage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showConfirmDialog(ChatPage.this, "Functie leaveConversation toevoegen");
+                setVisible(false);
             }
         });
     }
