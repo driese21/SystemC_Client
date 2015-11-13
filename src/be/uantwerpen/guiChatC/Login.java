@@ -55,9 +55,9 @@ public class Login extends JFrame {
                         manager.login(user, pwInput);
 
                     } catch (InvalidCredentialsException ex) {
+                        JOptionPane.showMessageDialog(null,"De gebruiker bestaat nog niet, probeer te registreren!");
                         System.out.println(ex.getMessage());
                     }
-
                 }
             }
         });
