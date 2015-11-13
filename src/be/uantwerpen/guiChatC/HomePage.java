@@ -72,7 +72,11 @@ public class HomePage extends JFrame {
                 JOptionPane.showMessageDialog(HomePage.this,"Je will chatten met: " + lstConversation.getSelectedValue());
                chatName = lstConversation.getSelectedValue().toString();
                 //ChatPage chat = new ChatPage(chatName);
-                manager.openChat(chatName);
+                try {
+                    manager.openChat(chatName);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
