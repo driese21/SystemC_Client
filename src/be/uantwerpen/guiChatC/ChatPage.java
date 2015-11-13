@@ -3,6 +3,8 @@ package be.uantwerpen.guiChatC;
 import be.uantwerpen.chat.Message;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.rmiInterfaces.IMessage;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,6 +16,7 @@ import java.rmi.RemoteException;
  * Created by Djamo on 30/10/2015.
  */
 public class ChatPage extends JFrame {
+    private UIManagerInterface uiManagerInterface;
     private JPanel pnlRootPanel;
     private JButton btnInvite;
     private JButton btnLeaveConversation;
@@ -23,8 +26,9 @@ public class ChatPage extends JFrame {
 
     public Client client;
 
-    public ChatPage(String chatname) {
+    public ChatPage(String chatname, UIManagerInterface uiManagerInterface) {
         super(chatname);
+        this.uiManagerInterface = uiManagerInterface;
         lblInGesprekMet.setText(chatname);
         setContentPane(pnlRootPanel);
         pack();
@@ -38,6 +42,7 @@ public class ChatPage extends JFrame {
         txtMessage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //uiManagerInterface.pushMessage();
                 txtConversation.append(txtMessage.getText());
                 txtConversation.append("\n");
                 txtMessage.setText("");
@@ -65,7 +70,8 @@ public class ChatPage extends JFrame {
         });
     }
 
-    public void receiveMessage(Message message) {
-        throw new UnsupportedOperationException();
+    public void receiveMessage(IMessage message) throws RemoteException {
+        txtConversation.append(message.getUsername() + ": " + message.getMessage());
+        txtConversation.append("\n");
     }
 }

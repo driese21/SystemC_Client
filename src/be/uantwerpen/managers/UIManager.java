@@ -168,8 +168,10 @@ public class UIManager implements UIManagerInterface {
     }
 
     @Override
-    public void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
-        throw new Exception("Needs implementation");
+    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception {
+        if (cnt == ChatNotificationType.NEWMESSAGE) {
+            chatPageHashMap.get(participator.getId()).receiveMessage(msg);
+        }
     }
     //endregion
 

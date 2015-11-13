@@ -98,9 +98,9 @@ public class ChatManager implements IChatManager {
      * @throws Exception
      */
     @Override
-    public void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
+    public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception {
         if (cnt == ChatNotificationType.NEWMESSAGE) {
-            System.out.println("not yet implemented");
+            uiManagerInterface.notifyView(cnt, msg, participator);
         } else if (cnt == ChatNotificationType.USERJOINED || cnt == ChatNotificationType.USERLEFT) {
             System.out.println("not yet implemented");
         }

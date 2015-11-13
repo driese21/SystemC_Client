@@ -19,5 +19,5 @@ public interface IChatManager {
 
     void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception;
 
-    void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception;
+    void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) throws Exception;
 }
