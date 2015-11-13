@@ -54,10 +54,8 @@ public class Login extends JFrame {
                     try{
                         manager.login(user, pwInput);
 
-                    } catch (Exception exc) {
-                        if (exc instanceof InvalidCredentialsException) {
-                            System.out.println(exc.getMessage());
-                        } else exc.printStackTrace();
+                    } catch (InvalidCredentialsException ex) {
+                        System.out.println(ex.getMessage());
                     }
 
                 }
