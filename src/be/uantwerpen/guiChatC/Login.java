@@ -52,13 +52,8 @@ public class Login extends JFrame {
                 else{
                     //inloggen
                     try{
-                        IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
-                        //IChatServer cs = (IChatServer) Naming.lookup("//"+"localhost"+"/Chatserver");
-                        //ca.login(user,pwOutput);
-                        AuthenticationManager authenticationManager = new AuthenticationManager(ca);
-                        authenticationManager.login(user,pwOutput);
+                        manager.login(user, pwInput);
 
-                        HomePage homepageForm = new HomePage(manager, user);
                     } catch (Exception exc) {
                         if (exc instanceof InvalidCredentialsException) {
                             System.out.println(exc.getMessage());

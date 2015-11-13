@@ -21,8 +21,11 @@ public class ChatManager implements IChatManager {
     private int pushRetries = 0;
     private int counter = 0;
     private UIManagerInterface uiManagerInterface;
+    private Client client;
 
-    public ChatManager() { }
+    public ChatManager(Client client) {
+        this.client = client;
+    }
 
     /**
      * Invites another user
@@ -32,13 +35,13 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
-        ChatParticipator chatParticipator = new ChatParticipator(counter++,Client.getInstance().getUsername());
+        ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
-        if (Client.getInstance().getClientSession().sendInvite(friendName, chs)) {
+        if (client.getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
-            Client.getInstance().addSession(chatParticipator);
+            client.addSession(chatParticipator);
             return chatParticipator;
         }
         return null;
@@ -54,10 +57,10 @@ public class ChatManager implements IChatManager {
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
         System.out.println("[INVITED CLIENT]Client");
-        ChatParticipator chatParticipator = new ChatParticipator(counter++, Client.getInstance().getUsername());
+        ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername());
         chatParticipator.addChatSession(chatSession);
         System.out.println("[INVITED CLIENT] Adding myself to participator list " + chatSession.joinSession(chatParticipator, false));
-        Client.getInstance().addSession(chatParticipator);
+        client.addSession(chatParticipator);
         uiManagerInterface.openChat(chatParticipator);
         return true;
     }

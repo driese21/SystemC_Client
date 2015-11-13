@@ -2,7 +2,9 @@ package be.uantwerpen.managers;
 
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.chat.Message;
+import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.guiChatC.ChatPage;
 import be.uantwerpen.guiChatC.HomePage;
 import be.uantwerpen.guiChatC.Login;
@@ -12,9 +14,12 @@ import be.uantwerpen.interfaces.IChatManager;
 import be.uantwerpen.interfaces.IClientManager;
 import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
+import be.uantwerpen.rmiInterfaces.IChatSession;
+import be.uantwerpen.rmiInterfaces.IMessage;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -127,4 +132,66 @@ public class UIManager implements UIManagerInterface {
         }
         return null;
     }
+
+    //region AuthenticationManager
+    @Override
+    public boolean register(String username, String password, String fullName) {
+        if (authenticationManager.register(username, password, fullName)) {
+            openHome(username);
+            return true;
+        } return false;
+    }
+
+    @Override
+    public boolean login(String username, String password) throws InvalidCredentialsException {
+        if (authenticationManager.login(username,password)) {
+            openHome(username);
+            return true;
+        } else return false;
+    }
+    //endregion
+
+    //region ChatManager
+    @Override
+    public IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+        return chatManager.sendInvite(friendName);
+    }
+
+    @Override
+    public boolean invite(IChatSession chatSession) throws RemoteException {
+        return chatManager.invite(chatSession);
+    }
+
+    @Override
+    public void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
+        chatManager.pushMessage(chatParticipator, msg);
+    }
+
+    @Override
+    public void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
+        throw new Exception("Needs implementation");
+    }
+    //endregion
+
+    //region ClientManager
+    @Override
+    public void openPassive(IChatManager chatManager) throws RemoteException {
+        clientManager.openPassive(chatManager);
+    }
+
+    @Override
+    public ArrayList<String> getFriends() throws RemoteException {
+        return clientManager.getFriends();
+    }
+
+    @Override
+    public boolean addFriend(String friendName) throws RemoteException {
+        return clientManager.addFriend(friendName);
+    }
+
+    @Override
+    public boolean deleteFriend(String friendName) throws RemoteException {
+        return clientManager.deleteFriend(friendName);
+    }
+    //endregion
 }

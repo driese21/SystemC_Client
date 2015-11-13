@@ -4,49 +4,39 @@ import be.uantwerpen.chat.*;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.rmiInterfaces.*;
 
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 
 /**
  * Created by Dries on 16/10/2015.
  */
-public class Client extends UnicastRemoteObject {
-    private static Client instance;
-    private String username, domain, fullName;
+public class Client {
+    private String username,  fullName;
     private HashSet<ChatParticipator> sessions;
     private IClientSession clientSession;
 
-    public static Client getInstance() throws RemoteException {
-        if (instance == null) instance = new Client();
-        return instance;
-    }
-
-    public static Client getInstance(String username, String fullName, IClientSession clientSession) throws RemoteException, InvalidCredentialsException {
-        if (instance == null || instance.username == null) instance = new Client(username, fullName, clientSession);
-        return instance;
-    }
-
-    private Client() throws RemoteException {
+    public Client() {
         sessions = new HashSet<>();
     }
 
-    private Client(String username, String fullName, IClientSession clientSession) throws RemoteException, InvalidCredentialsException {
+    public Client(String username, String fullName, IClientSession clientSession) throws InvalidCredentialsException, RemoteException {
         this();
-        trySplitUsername(username);
+        this.username = username;
         this.fullName = fullName;
         this.clientSession = clientSession;
         System.out.println(this.clientSession.getUsername());
     }
 
-    private void trySplitUsername(String username) throws InvalidCredentialsException {
-        try {
-            this.username = username.split("@")[0];
-            this.domain = username.split("@")[1];
-        } catch (ArrayIndexOutOfBoundsException aiooe) {
-            throw new InvalidCredentialsException("Wrong username or domain name");
-        }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setClientSession(IClientSession clientSession) {
+        this.clientSession = clientSession;
     }
 
     public String getUsername() {

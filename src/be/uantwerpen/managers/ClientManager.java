@@ -12,29 +12,33 @@ import java.util.ArrayList;
  * Created by Dries on 3/11/2015.
  */
 public class ClientManager implements IClientManager {
+    private Client client;
+    private IChatManager chatManager;
 
-    public ClientManager(IChatManager chatManager) throws RemoteException {
-        openPassive(chatManager);
+    public ClientManager(IChatManager chatManager, Client client) throws RemoteException {
+        this.client = client;
+        this.chatManager = chatManager;
+        //openPassive(chatManager);
     }
 
     public void openPassive(IChatManager chatManager) throws RemoteException {
         ChatInitiator chatInitiator = new ChatInitiator(chatManager);
-        Client.getInstance().getClientSession().setChatInitiator(chatInitiator);
+        client.getClientSession().setChatInitiator(chatInitiator);
     }
 
     @Override
     public ArrayList<String> getFriends() throws RemoteException {
-        return Client.getInstance().getClientSession().getFriends();
+        return client.getClientSession().getFriends();
     }
 
     @Override
     public boolean addFriend(String friendName) throws RemoteException {
-        return Client.getInstance().getClientSession().addFriend(friendName);
+        return client.getClientSession().addFriend(friendName);
     }
 
     @Override
     public boolean deleteFriend(String friendName) throws RemoteException {
-        return Client.getInstance().getClientSession().deleteFriend(friendName);
+        return client.getClientSession().deleteFriend(friendName);
     }
 
 

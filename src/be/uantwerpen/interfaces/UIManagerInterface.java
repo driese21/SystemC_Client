@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
  * Creator: Seb
  * Date: 8/11/2015
  */
-public interface UIManagerInterface {
+public interface UIManagerInterface extends IAuthenticationManager, IChatManager, IClientManager {
     void openLogin();
 
     void openRegister();
