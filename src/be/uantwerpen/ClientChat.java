@@ -1,14 +1,20 @@
 package be.uantwerpen;
 
 import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.managers.MainManager;
 import be.uantwerpen.managers.UIManager;
+
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 /**
  * Created by Dries on 16/10/2015.
  */
 public class ClientChat {
-    public static void main(String[] args) {
-        UIManagerInterface manager = new UIManager();
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+        MainManager mainManager = new MainManager();
+        //UIManagerInterface manager = new UIManager();1
         //Login login = new Login();
         /*try {
             try {

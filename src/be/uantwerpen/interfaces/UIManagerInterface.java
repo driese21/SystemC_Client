@@ -1,5 +1,9 @@
 package be.uantwerpen.interfaces;
 
+import be.uantwerpen.rmiInterfaces.IChatParticipator;
+
+import java.rmi.RemoteException;
+
 /**
  * Creator: Seb
  * Date: 8/11/2015
@@ -11,5 +15,7 @@ public interface UIManagerInterface {
 
     void openHome(String user);
 
-    void openChat(String chatName);
+    void openChat(String chatName) throws Exception;
+
+    void openChat(IChatParticipator chatParticipator) throws RemoteException;
 }

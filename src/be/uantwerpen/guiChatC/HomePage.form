@@ -59,7 +59,9 @@
             <preferred-size width="150" height="200"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <enabled value="true"/>
+        </properties>
       </component>
       <component id="3e350" class="javax.swing.JButton" binding="btnDeleteFriend">
         <constraints>

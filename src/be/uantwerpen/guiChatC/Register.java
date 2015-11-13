@@ -60,11 +60,11 @@ public class Register extends JFrame {
                     //registreren
                     try{
                         //temporary code!!
-                        IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+                        //IClientAcceptor ca = (IClientAcceptor) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
                         //IChatServer cs = (IChatServer) Naming.lookup("//" + "localhost" + "/Chatserver");
                         //ca.register(user, pwOutput, fullName);
-                        AuthenticationManager authenticationManager = new AuthenticationManager(ca);
-                        authenticationManager.register(user, pwOutput, fullName);
+                        //AuthenticationManager authenticationManager = new AuthenticationManager(ca);
+                        //authenticationManager.register(user, pwOutput, fullName);
 
                         //HomePage homepageForm = new HomePage(user);
                         manager.openHome(user);

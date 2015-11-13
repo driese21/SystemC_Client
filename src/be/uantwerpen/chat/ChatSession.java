@@ -127,6 +127,15 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         this.chatName = chatName;
     }
 
+    @Override
+    public void chooseChatName() throws RemoteException {
+        StringBuilder sb = new StringBuilder();
+        for (IChatParticipator participator : participators) {
+            if (!participator.isServer()) sb.append(participator.getName());
+        }
+        setChatName(sb.toString());
+    }
+
     /**
      * Gets invoked by another ChatParticipator who is re-hosting the ChatSession
      * @param newHost A reference to the new host

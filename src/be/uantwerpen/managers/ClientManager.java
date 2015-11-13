@@ -2,6 +2,7 @@ package be.uantwerpen.managers;
 
 import be.uantwerpen.chat.ChatInitiator;
 import be.uantwerpen.client.Client;
+import be.uantwerpen.interfaces.IChatManager;
 import be.uantwerpen.interfaces.IClientManager;
 
 import java.rmi.RemoteException;
@@ -12,13 +13,13 @@ import java.util.ArrayList;
  */
 public class ClientManager implements IClientManager {
 
-    public ClientManager() throws RemoteException {
-        openPassive();
+    public ClientManager(IChatManager chatManager) throws RemoteException {
+        openPassive(chatManager);
     }
 
-    public void openPassive() throws RemoteException {
-        ChatInitiator chatInitiator = new ChatInitiator();
-        //Client.getInstance().getClientSession().setChatInitiator(chatInitiator);
+    public void openPassive(IChatManager chatManager) throws RemoteException {
+        ChatInitiator chatInitiator = new ChatInitiator(chatManager);
+        Client.getInstance().getClientSession().setChatInitiator(chatInitiator);
     }
 
     @Override

@@ -98,9 +98,18 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         return false;
     }
 
+    /**
+     * @return Username of this ChatParticipator
+     * @throws RemoteException
+     */
     @Override
     public String getName() throws RemoteException {
         return username;
+    }
+
+    @Override
+    public String getChatName() throws RemoteException {
+        return chatSession.getChatName();
     }
 
     @Override
@@ -160,11 +169,21 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         return chatSession;
     }
 
+    /**
+     * The hostname is stored redundantly in order to remove host when it has dropped the connection
+     * @return The name of the host ChatParticipator (who is hosting ChatSession)
+     */
     public String getHostName() {
         return hostName;
     }
 
     public ChatSession getClonedChatSession() {
         return clonedChatSession;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        ChatParticipator b = (ChatParticipator) obj;
+        return this.id == b.id;
     }
 }

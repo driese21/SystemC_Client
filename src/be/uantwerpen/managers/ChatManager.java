@@ -5,6 +5,8 @@ import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.interfaces.IChatManager;
+import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
@@ -15,10 +17,12 @@ import java.util.ArrayList;
 /**
  * Created by Dries on 3/11/2015.
  */
-public class ChatManager {
-    private static final int MAXRETRIES = 5;
-    private static int pushRetries = 0;
-    private static int counter = 0;
+public class ChatManager implements IChatManager {
+    private int pushRetries = 0;
+    private int counter = 0;
+    private UIManagerInterface uiManagerInterface;
+
+    public ChatManager() { }
 
     /**
      * Invites another user
@@ -26,7 +30,8 @@ public class ChatManager {
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
-    public static int sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+    @Override
+    public IChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,Client.getInstance().getUsername());
         ChatSession chs = new ChatSession(chatParticipator);
         //chs.setChatName(Client.getInstance());
@@ -34,9 +39,9 @@ public class ChatManager {
         if (Client.getInstance().getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
             Client.getInstance().addSession(chatParticipator);
-            return counter++;
+            return chatParticipator;
         }
-        return -1;
+        return null;
     }
 
     /**
@@ -46,12 +51,14 @@ public class ChatManager {
      * @return
      * @throws RemoteException
      */
-    public static boolean invite(IChatSession chatSession) throws RemoteException {
+    @Override
+    public boolean invite(IChatSession chatSession) throws RemoteException {
         System.out.println("[INVITED CLIENT]Client");
         ChatParticipator chatParticipator = new ChatParticipator(counter++, Client.getInstance().getUsername());
         chatParticipator.addChatSession(chatSession);
         System.out.println("[INVITED CLIENT] Adding myself to participator list " + chatSession.joinSession(chatParticipator, false));
         Client.getInstance().addSession(chatParticipator);
+        uiManagerInterface.openChat(chatParticipator);
         return true;
     }
 
@@ -61,14 +68,16 @@ public class ChatManager {
      * @param msg message we want to send
      * @throws Exception
      */
-    public static void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
+    @Override
+    public void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
         String username = chatParticipator.getName();
         IChatSession iChatSession = chatParticipator.getChatSession();
         try {
             iChatSession.newMessage(msg, username);
             pushRetries = 0;
         } catch (RemoteException re) {
-            if (pushRetries < MAXRETRIES) {
+            int maxRetries = 5;
+            if (pushRetries < maxRetries) {
                 Thread.sleep(1000);
                 pushRetries++;
                 pushMessage(chatParticipator, msg);
@@ -85,7 +94,8 @@ public class ChatManager {
      * @param participator which chatparticipator sent it
      * @throws Exception
      */
-    public static void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
+    @Override
+    public void notifyView(ChatNotificationType cnt, IMessage msg, IChatParticipator participator) throws Exception {
         if (cnt == ChatNotificationType.NEWMESSAGE) {
             System.out.println("not yet implemented");
         } else if (cnt == ChatNotificationType.USERJOINED || cnt == ChatNotificationType.USERLEFT) {
@@ -100,7 +110,7 @@ public class ChatManager {
      * @param chatParticipator On which chatparticipator it should try to re-host the session
      * @throws Exception
      */
-    private static void tryRecoverChat(ChatParticipator chatParticipator) throws Exception {
+    private void tryRecoverChat(ChatParticipator chatParticipator) throws Exception {
         System.out.println("host left, trying to take over...");
         IChatParticipator server = null;
         ArrayList<IChatParticipator> otherParticipators = chatParticipator.getOtherParticipators();
@@ -122,5 +132,9 @@ public class ChatManager {
         for (IChatParticipator other : otherParticipators) {
             other.hostChanged(chatParticipator,chatParticipator.getClonedChatSession());
         }
+    }
+
+    public void setUiManagerInterface(UIManagerInterface uiManagerInterface) {
+        this.uiManagerInterface = uiManagerInterface;
     }
 }
