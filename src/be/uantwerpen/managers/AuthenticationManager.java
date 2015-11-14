@@ -1,11 +1,12 @@
 package be.uantwerpen.managers;
 
 import be.uantwerpen.client.Client;
+import be.uantwerpen.client.StatusUpdater;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.interfaces.IAuthenticationManager;
 import be.uantwerpen.interfaces.IChatManager;
 import be.uantwerpen.interfaces.IClientManager;
-import be.uantwerpen.rmiInterfaces.IClientAcceptor;
+import be.uantwerpen.rmiInterfaces.IServerListener;
 import be.uantwerpen.rmiInterfaces.IClientSession;
 
 import java.rmi.RemoteException;
@@ -17,12 +18,12 @@ public class AuthenticationManager implements IAuthenticationManager {
     private Client client;
     private IClientManager clientManager;
     private IChatManager chatManager;
-    private IClientAcceptor clientAcceptor;
+    private IServerListener serverListener;
 
     public AuthenticationManager() { }
 
-    public AuthenticationManager(IClientAcceptor clientAcceptor, Client client, IClientManager clientManager, IChatManager chatManager) {
-        this.clientAcceptor = clientAcceptor;
+    public AuthenticationManager(IServerListener serverListener, Client client, IClientManager clientManager, IChatManager chatManager) {
+        this.serverListener = serverListener;
         this.clientManager = clientManager;
         this.chatManager = chatManager;
         this.client = client;
@@ -31,7 +32,7 @@ public class AuthenticationManager implements IAuthenticationManager {
     @Override
     public boolean register(String username, String password, String fullName) {
         try {
-            IClientSession ics = clientAcceptor.register(username,password,fullName);
+            IClientSession ics = serverListener.register(username,password,fullName);
             if (ics == null) {
                 System.out.println("hier klopt iets niet");
                 return false;
@@ -40,7 +41,7 @@ public class AuthenticationManager implements IAuthenticationManager {
             client.setUsername(username);
             client.setClientSession(ics);
             //client = new Client(username,fullName,ics);
-            notifyClientMgr();
+            finalizeAuthentication(ics);
         } catch (RemoteException e) {
             e.printStackTrace();
             return false;
@@ -55,7 +56,7 @@ public class AuthenticationManager implements IAuthenticationManager {
     public boolean login(String username, String password) throws InvalidCredentialsException {
         try {
             System.out.println(username);
-            IClientSession ics = clientAcceptor.login(username, password);
+            IClientSession ics = serverListener.login(username, password);
             if (ics == null) {
                 System.out.println("hier klopt ook iets niet");
                 return false;
@@ -64,7 +65,7 @@ public class AuthenticationManager implements IAuthenticationManager {
             client.setUsername(username);
             client.setFullName(ics.getFullname());
             client.setClientSession(ics);
-            notifyClientMgr();
+            finalizeAuthentication(ics);
         } catch (RemoteException e) {
             e.printStackTrace();
             return false;
@@ -72,7 +73,8 @@ public class AuthenticationManager implements IAuthenticationManager {
         return true;
     }
 
-    private void notifyClientMgr() throws RemoteException {
+    private void finalizeAuthentication(IClientSession ics) throws RemoteException {
         clientManager.openPassive(chatManager);
+        new Thread(new StatusUpdater(ics)).start();
     }
 }

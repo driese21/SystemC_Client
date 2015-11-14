@@ -1,5 +1,7 @@
 package be.uantwerpen.guiChatC;
 
+import be.uantwerpen.chat.ChatParticipator;
+import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.managers.*;
 import be.uantwerpen.managers.UIManager;
@@ -23,18 +25,22 @@ public class HomePage extends JFrame {
     private JTextField txtSearchConversation;
     private JList lstConversation;
     private JPanel pnlRootPanel;
+    private JComboBox cmbFriends;
 
     private String friendName;
 
     private String chatName;
-    private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
-    //private ArrayList<String> gesprekken;
+    //private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
+    private ArrayList<String> gesprekken;
 
-    public HomePage(UIManagerInterface manager, String username) {
+    public HomePage(UIManagerInterface manager) {
         super("HomePage");
         this.manager = manager;
-        lstConversation.setListData(gesprekken);
-        //lstConversation.setListData(gesprekken);
+        try {
+            updateFriendList(manager.getFriends());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         setContentPane(pnlRootPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,7 +102,45 @@ public class HomePage extends JFrame {
                 }
             }
         });
+    }
 
+    private void addFriendsActionListener() {
+        cmbFriends.addActionListener(getFriendsActionListener());
+    }
+
+    private void removeFriendsActionListener() {
+        cmbFriends.removeActionListener(getFriendsActionListener());
+    }
+
+    private ActionListener getFriendsActionListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox jComboBox = (JComboBox) e.getSource();
+                try {
+                    manager.sendInvite((String)jComboBox.getSelectedItem());
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                } catch (ClientNotOnlineException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        };
+    }
+
+    /**
+     * Updates the ComboBox with friends
+     * @param friends the user's friends
+     */
+    public void updateFriendList(ArrayList<String> friends) {
+        removeFriendsActionListener();
+        friends.forEach(fr -> cmbFriends.addItem(fr));
+        addFriendsActionListener();
+    }
+
+    public void updateChatSession(ArrayList<String> chats) {
+        this.gesprekken = chats;
+        lstConversation.setListData(gesprekken.toArray());
     }
 
 }

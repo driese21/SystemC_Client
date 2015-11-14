@@ -2,8 +2,8 @@ package be.uantwerpen.interfaces;
 
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.enums.ChatNotificationType;
+import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
-import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
@@ -20,4 +20,6 @@ public interface IChatManager {
     void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception;
 
     void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator);
+
+    void notifyView(ClientStatusType cnt, String friendName);
 }

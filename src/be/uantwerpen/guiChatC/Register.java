@@ -1,13 +1,10 @@
 package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.interfaces.UIManagerInterface;
-import be.uantwerpen.managers.AuthenticationManager;
-import be.uantwerpen.rmiInterfaces.IClientAcceptor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.Naming;
 import java.util.Arrays;
 
 /**

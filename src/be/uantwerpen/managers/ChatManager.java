@@ -4,6 +4,7 @@ import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.enums.ChatNotificationType;
+import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.interfaces.IChatManager;
 import be.uantwerpen.interfaces.UIManagerInterface;
@@ -37,7 +38,6 @@ public class ChatManager implements IChatManager {
     public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername(), this);
         ChatSession chs = new ChatSession(chatParticipator);
-        //chs.setChatName(Client.getInstance());
         chatParticipator.addChatSession(chs);
         if (client.getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
@@ -48,7 +48,7 @@ public class ChatManager implements IChatManager {
     }
 
     /**
-     * This gets called by ChatInitiator which got invoked by ClientSession on server
+     * This gets called by ClientListener which got invoked by ClientSession on server
      * which received an invite request from another user, the method above
      * @param chatSession the ChatSession we will be chatting on
      * @return
@@ -56,10 +56,8 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
-        System.out.println("[INVITED CLIENT]Client");
         ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername(), this);
         chatParticipator.addChatSession(chatSession);
-        System.out.println("[INVITED CLIENT] Adding myself to participator list " + chatSession.joinSession(chatParticipator, false));
         client.addSession(chatParticipator);
         uiManagerInterface.openChat(chatParticipator);
         return true;
@@ -115,6 +113,16 @@ public class ChatManager implements IChatManager {
         } else if (cnt == ChatNotificationType.USERJOINED || cnt == ChatNotificationType.USERLEFT) {
             System.out.println("not yet implemented");
         }
+    }
+
+    /**
+     * This gets invoked by ClientListener who received an update about the user's friends
+     * @param cst The Client Status Type
+     * @param friendName User friend's name
+     */
+    @Override
+    public void notifyView(ClientStatusType cst, String friendName) {
+        uiManagerInterface.notifyView(cst, friendName);
     }
 
     /**

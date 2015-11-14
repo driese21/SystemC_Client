@@ -3,8 +3,10 @@ package be.uantwerpen.managers;
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.chat.Message;
 import be.uantwerpen.enums.ChatNotificationType;
+import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
+import be.uantwerpen.exceptions.UnknownClientException;
 import be.uantwerpen.guiChatC.ChatPage;
 import be.uantwerpen.guiChatC.HomePage;
 import be.uantwerpen.guiChatC.Login;
@@ -16,8 +18,8 @@ import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.swing.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +32,8 @@ import java.util.Map;
  */
 public class UIManager implements UIManagerInterface {
     private HashMap<ChatParticipator, ChatPage> chatPageHashMap;
+    private HashMap<String, ClientStatusType> friends;
+    private HomePage homePage;
     private IChatManager chatManager;
     private IClientManager clientManager;
     private IAuthenticationManager authenticationManager;
@@ -40,6 +44,7 @@ public class UIManager implements UIManagerInterface {
 
     public UIManager(IChatManager chatManager, IClientManager clientManager, IAuthenticationManager authenticationManager) {
         this.chatPageHashMap = new HashMap<>();
+        this.friends = new HashMap<>();
         this.chatManager = chatManager;
         this.clientManager = clientManager;
         this.authenticationManager = authenticationManager;
@@ -55,7 +60,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     public void openHome(String user){
-        HomePage homepageForm = new HomePage(this, user);
+        this.homePage = new HomePage(this);
     }
 
     @Override
@@ -94,6 +99,7 @@ public class UIManager implements UIManagerInterface {
     public void openChat(ChatParticipator chatParticipator) throws RemoteException {
         ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
         chatPageHashMap.put(chatParticipator, chatPage);
+        updateHomePage();
     }
 
     /**
@@ -104,11 +110,6 @@ public class UIManager implements UIManagerInterface {
         IChatParticipator chatParticipator = findParticipator(id);
         chatPageHashMap.get(chatParticipator).setVisible(true);
     }
-
-    /*public void openChat(int id, String chatName){
-        ChatPage chat = new ChatPage(chatName);
-        chatMap.put(id, chat);
-    }*/
 
     public void receiveMessage(int id, Message message){
         //chatMap.get(id).receiveMessage(message);
@@ -124,7 +125,7 @@ public class UIManager implements UIManagerInterface {
         }*/
     }
 
-    private IChatParticipator findParticipator(int id) {
+    private ChatParticipator findParticipator(int id) {
         Iterator it = chatPageHashMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -132,6 +133,25 @@ public class UIManager implements UIManagerInterface {
             if (cp.getId() == id) return cp;
         }
         return null;
+    }
+
+    private void updateHomePage() {
+        ArrayList<String> openChats = new ArrayList<>();
+        Iterator iterator = chatPageHashMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            ChatParticipator cp = (ChatParticipator)iterator.next();
+            try {
+                openChats.add(cp.getChatName());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        homePage.updateChatSession(openChats);
+    }
+
+    @Override
+    public void updateFriendList(ArrayList<String> friends) {
+        homePage.updateFriendList(friends);
     }
 
     //region AuthenticationManager
@@ -158,30 +178,56 @@ public class UIManager implements UIManagerInterface {
         return chatManager.sendInvite(friendName);
     }
 
+
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
-        return chatManager.invite(chatSession);
+        throw new NotImplementedException();
     }
 
     @Override
     public void pushMessage(ChatParticipator chatParticipator, String msg) throws Exception {
-        System.out.println("Received message from GUI: " + msg);
         chatManager.pushMessage(chatParticipator, msg);
     }
 
     @Override
     public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) {
-        System.out.println("RECEIVED MESSAGE!!");
         if (cnt == ChatNotificationType.NEWMESSAGE) {
             chatPageHashMap.get(participator).receiveMessage(msg);
         }
     }
+
+    /**
+     * This gets invoked by ClientListener who received an update about the user's friends
+     * @param cst The Client Status Type
+     * @param friendName User friend's name
+     */
+    @Override
+    public void notifyView(ClientStatusType cst, String friendName) {
+        ClientStatusType clientStatusType = friends.get(friendName);
+        if (clientStatusType == null) {
+            System.out.println("We don't have this user as our friend...");
+            return;
+        }
+        if (clientStatusType == cst) {
+            System.out.println("We already have the latest status...");
+            return;
+        }
+
+        if (cst == ClientStatusType.USERONLINE) {
+            friends.put(friendName, cst);
+        } else if (cst == ClientStatusType.USEROFFLINE) {
+            friends.put(friendName, cst);
+        } else if (cst == ClientStatusType.USERBUSY) {
+            friends.put(friendName, cst);
+        }
+    }
+
     //endregion
 
     //region ClientManager
     @Override
     public void openPassive(IChatManager chatManager) throws RemoteException {
-        clientManager.openPassive(chatManager);
+        throw new NotImplementedException();
     }
 
     @Override
@@ -190,7 +236,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     @Override
-    public boolean addFriend(String friendName) throws RemoteException {
+    public boolean addFriend(String friendName) throws RemoteException, UnknownClientException {
         return clientManager.addFriend(friendName);
     }
 
@@ -198,5 +244,11 @@ public class UIManager implements UIManagerInterface {
     public boolean deleteFriend(String friendName) throws RemoteException {
         return clientManager.deleteFriend(friendName);
     }
+
+    @Override
+    public void friendListUpdated() throws RemoteException {
+        throw new NotImplementedException();
+    }
+
     //endregion
 }

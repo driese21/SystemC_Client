@@ -25,5 +25,6 @@ public class MainManager {
         this.uiManager = new UIManager(chatManager, clientManager, authenticationManager);
         //todo dit moet echt wel anders
         chatManager.setUiManagerInterface(this.uiManager);
+        clientManager.setUiManagerInterface(this.uiManager);
     }
 }
