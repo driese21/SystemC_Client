@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
 public interface IChatManager {
     ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException;
 
-    //ChatParticipator sendInvite(ChatParticipator cp, String friendName) throws RemoteException;
+    boolean sendInvite(ChatParticipator cp, String friendName) throws RemoteException, ClientNotOnlineException;
 
     boolean invite(IChatSession chatSession) throws RemoteException;
 

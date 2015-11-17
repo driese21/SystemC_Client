@@ -61,9 +61,7 @@ public class ChatPage extends JFrame {
 
                 try {
                     friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
-                    //client.invite(friendName);
-                    //uiManagerInterface.sendInvite(chatParticipator, friendName);
-
+                    uiManagerInterface.sendInvite(chatParticipator, friendName);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());
                 }

@@ -48,8 +48,8 @@ public class Login extends JFrame {
                 else{
                     //inloggen
                     try{
-                        manager.login(user, pwInput);
-
+                        manager.login(user, pwOutput);
+                        dispose();
                     } catch (InvalidCredentialsException ex) {
                         JOptionPane.showMessageDialog(null,"De gebruiker bestaat nog niet, probeer te registreren!");
                         System.out.println(ex.getMessage());

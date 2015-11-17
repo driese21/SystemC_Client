@@ -51,6 +51,18 @@ public class ChatManager implements IChatManager {
     }
 
     /**
+     * Invite another client to an existing chatsession
+     * @param cp the participator that's in a given chatsession
+     * @param friendName the friend we want to invite
+     * @throws RemoteException
+     * @throws ClientNotOnlineException
+     */
+    @Override
+    public boolean sendInvite(ChatParticipator cp, String friendName) throws RemoteException, ClientNotOnlineException {
+        return client.getClientSession().sendInvite(friendName, cp.getChatSession());
+    }
+
+    /**
      * This gets called by ClientListener which got invoked by ClientSession on server
      * which received an invite request from another user, the method above
      * @param chatSession the ChatSession we will be chatting on

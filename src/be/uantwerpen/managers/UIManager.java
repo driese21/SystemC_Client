@@ -142,7 +142,7 @@ public class UIManager implements UIManagerInterface {
     //region ChatManager
     @Override
     public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
-        System.out.println("I want to invite " + friendName);
+        //System.out.println("I want to invite " + friendName);
         ChatParticipator cp = chatManager.sendInvite(friendName);
         if (cp != null)
             openChat(cp);
@@ -150,6 +150,18 @@ public class UIManager implements UIManagerInterface {
         return cp;
     }
 
+    /**
+     * invites another user to the already existing chatsession
+     * @param cp the active ChatParticipator
+     * @param friendName Friend's name
+     * @return true if the invite was successful, otherwise false or error
+     * @throws RemoteException
+     * @throws ClientNotOnlineException
+     */
+    @Override
+    public boolean sendInvite(ChatParticipator cp, String friendName) throws RemoteException, ClientNotOnlineException {
+        return chatManager.sendInvite(cp, friendName);
+    }
 
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
