@@ -26,6 +26,7 @@ public class Login extends JFrame {
         this.manager = manager;
         setContentPane(pnlLogin);
         pack();
+        setLocationRelativeTo(null);
         setVisible(true);
 
         addListeners();

@@ -47,6 +47,7 @@ public class HomePage extends JFrame {
         lstConversation = new JList(listModel);
         setContentPane(pnlRootPanel);
         pack();
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addListeners();
         setVisible(true);

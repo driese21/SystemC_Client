@@ -1,5 +1,6 @@
 package be.uantwerpen;
 
+import be.uantwerpen.guiChatC.HomePage;
 import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.managers.MainManager;
 import be.uantwerpen.managers.UIManager;
@@ -13,7 +14,9 @@ import java.rmi.RemoteException;
  */
 public class ClientChat {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+
         MainManager mainManager = new MainManager();
+
         //UIManagerInterface manager = new UIManager();1
         //Login login = new Login();
         /*try {
