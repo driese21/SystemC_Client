@@ -2,6 +2,7 @@ package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
+import be.uantwerpen.exceptions.UnknownClientException;
 import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.managers.*;
 import be.uantwerpen.managers.UIManager;
@@ -24,6 +25,7 @@ public class HomePage extends JFrame {
     private JButton btnLogOff;
     private JTextField txtSearchConversation;
     private JList lstConversation;
+    private DefaultListModel listModel;
     private JPanel pnlRootPanel;
     private JComboBox cmbFriends;
 
@@ -31,7 +33,7 @@ public class HomePage extends JFrame {
 
     private String chatName;
     //private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
-    private ArrayList<String> gesprekken;
+    private ArrayList<ChatParticipator> gesprekken;
 
     public HomePage(UIManagerInterface manager) {
         super("HomePage");
@@ -41,6 +43,8 @@ public class HomePage extends JFrame {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        listModel = new DefaultListModel();
+        lstConversation = new JList(listModel);
         setContentPane(pnlRootPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,27 +106,29 @@ public class HomePage extends JFrame {
                 }
             }
         });
+        addFriendsActionListener();
     }
 
     private void addFriendsActionListener() {
         cmbFriends.addActionListener(getFriendsActionListener());
     }
 
-    private void removeFriendsActionListener() {
+   /* private void removeFriendsActionListener() {
         cmbFriends.removeActionListener(getFriendsActionListener());
-    }
+    }*/
 
     private ActionListener getFriendsActionListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox jComboBox = (JComboBox) e.getSource();
+                //System.out.println(e.getActionCommand());
                 try {
-                    manager.sendInvite((String)jComboBox.getSelectedItem());
+                    manager.sendInvite(jComboBox.getSelectedItem().toString());
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
-                } catch (ClientNotOnlineException e1) {
-                    e1.printStackTrace();
+                } catch (ClientNotOnlineException cnoe) {
+                    cnoe.printStackTrace();
                 }
             }
         };
@@ -133,13 +139,18 @@ public class HomePage extends JFrame {
      * @param friends the user's friends
      */
     public void updateFriendList(ArrayList<String> friends) {
-        removeFriendsActionListener();
-        friends.forEach(fr -> cmbFriends.addItem(fr));
-        addFriendsActionListener();
+        for (int i=0;i<friends.size();i++) {
+            //use insert item at to not trigger the action listener
+            cmbFriends.insertItemAt(friends.get(i),i);
+        }
+        //addFriendsActionListener();
     }
 
-    public void updateChatSession(ArrayList<String> chats) {
+    public void updateChatSession(ArrayList<ChatParticipator> chats) {
         this.gesprekken = chats;
+        for (int i=0;i<chats.size();i++) {
+            listModel.addElement(chats.get(i));
+        }
         lstConversation.setListData(gesprekken.toArray());
     }
 

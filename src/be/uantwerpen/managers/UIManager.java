@@ -99,6 +99,7 @@ public class UIManager implements UIManagerInterface {
     public void openChat(ChatParticipator chatParticipator) throws RemoteException {
         ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
         chatPageHashMap.put(chatParticipator, chatPage);
+        System.out.println("");
         updateHomePage();
     }
 
@@ -136,15 +137,11 @@ public class UIManager implements UIManagerInterface {
     }
 
     private void updateHomePage() {
-        ArrayList<String> openChats = new ArrayList<>();
+        ArrayList<ChatParticipator> openChats = new ArrayList<>();
         Iterator iterator = chatPageHashMap.keySet().iterator();
         while (iterator.hasNext()) {
             ChatParticipator cp = (ChatParticipator)iterator.next();
-            try {
-                openChats.add(cp.getChatName());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            openChats.add(cp);
         }
         homePage.updateChatSession(openChats);
     }
@@ -175,7 +172,10 @@ public class UIManager implements UIManagerInterface {
     //region ChatManager
     @Override
     public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
-        return chatManager.sendInvite(friendName);
+        System.out.println("I want to invite " + friendName);
+        ChatParticipator cp = chatManager.sendInvite(friendName);
+        if (cp == null) System.out.println("Something went wrong while inviting " + friendName);
+        return cp;
     }
 
 
