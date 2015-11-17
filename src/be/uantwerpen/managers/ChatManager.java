@@ -42,7 +42,10 @@ public class ChatManager implements IChatManager {
         if (client.getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
             client.addSession(chatParticipator);
+            System.out.println("[CHATMANAGER] adding new session");
             return chatParticipator;
+        } else {
+            System.out.println("[CHATMANAGER] invite failed!");
         }
         return null;
     }

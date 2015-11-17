@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class ChatParticipator extends UnicastRemoteObject implements IChatParticipator {
     private int id;
-    private String username, hostName;
+    private String username, hostName, chatName;
     private IChatSession chatSession;
     private ChatSession clonedChatSession;
     private ArrayList<IChatParticipator> otherParticipators;
@@ -48,8 +48,9 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         this.chatSession = chatSession;
         this.host = chatSession.getHost();
         this.hostName = host.getName();
-        System.out.println("ADDING CHATSESSION, host is " + chatSession.getHost().getName());
-        System.out.println("Chatsession name is " + chatSession.getChatName());
+        this.chatName = chatSession.getChatName();
+        //System.out.println("ADDING CHATSESSION, host is " + chatSession.getHost().getName());
+        //System.out.println("Chatsession name is " + chatSession.getChatName());
         this.clonedChatSession = new ChatSession(chatSession);
     }
 
@@ -182,5 +183,10 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
 
     public ChatSession getClonedChatSession() {
         return clonedChatSession;
+    }
+
+    @Override
+    public String toString() {
+        return chatName;
     }
 }

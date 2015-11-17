@@ -46,6 +46,7 @@ public class ChatPage extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     uiManagerInterface.pushMessage(chatParticipator, txtMessage.getText());
+                    txtMessage.setText("");
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
