@@ -36,6 +36,7 @@ public class ChatPage extends JFrame {
         pack();
         //  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        setLocationRelativeTo(null);
         addListeners();
     }
 

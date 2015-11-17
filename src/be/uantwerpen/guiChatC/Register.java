@@ -29,6 +29,7 @@ public class Register extends JFrame {
         setContentPane(pnlRegister);
         pack();
         setVisible(true);
+        setLocationRelativeTo(null);
 
         addListeners();
 
