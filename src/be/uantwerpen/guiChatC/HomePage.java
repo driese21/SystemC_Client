@@ -2,10 +2,7 @@ package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
-import be.uantwerpen.exceptions.UnknownClientException;
 import be.uantwerpen.interfaces.UIManagerInterface;
-import be.uantwerpen.managers.*;
-import be.uantwerpen.managers.UIManager;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -24,15 +21,14 @@ public class HomePage extends JFrame {
     private JButton btnDeleteFriend;
     private JButton btnLogOff;
     private JTextField txtSearchConversation;
+    private DefaultListModel conversationListModel;
     private JList lstConversation;
-    private DefaultListModel listModel;
     private JPanel pnlRootPanel;
     private JComboBox cmbFriends;
 
     private String friendName;
 
     private String chatName;
-    //private String[] gesprekken = {"Michiel","Dries","Sebastiaan","Djamo"};
     private ArrayList<ChatParticipator> gesprekken;
 
     public HomePage(UIManagerInterface manager) {
@@ -43,8 +39,8 @@ public class HomePage extends JFrame {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        listModel = new DefaultListModel();
-        lstConversation = new JList(listModel);
+        conversationListModel = new DefaultListModel();
+        lstConversation = new JList(conversationListModel);
         setContentPane(pnlRootPanel);
         pack();
         setLocationRelativeTo(null);
@@ -140,6 +136,7 @@ public class HomePage extends JFrame {
      * @param friends the user's friends
      */
     public void updateFriendList(ArrayList<String> friends) {
+        cmbFriends.removeAllItems();
         for (int i=0;i<friends.size();i++) {
             //use insert item at to not trigger the action listener
             cmbFriends.insertItemAt(friends.get(i),i);
@@ -147,12 +144,11 @@ public class HomePage extends JFrame {
         //addFriendsActionListener();
     }
 
-    public void updateChatSession(ArrayList<ChatParticipator> chats) {
-        this.gesprekken = chats;
-        for (int i=0;i<chats.size();i++) {
-            listModel.addElement(chats.get(i));
-        }
-        lstConversation.setListData(gesprekken.toArray());
+    public void updateChats() {
+        conversationListModel.clear();
+        ArrayList<ChatParticipator> participators = manager.getActiveChatSessions();
+        System.out.println("#Chatsessies waar ik in zit: " + participators.size());
+        participators.forEach(conversationListModel::addElement);
     }
 
 }

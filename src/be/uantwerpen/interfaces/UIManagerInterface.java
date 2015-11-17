@@ -23,4 +23,6 @@ public interface UIManagerInterface extends IAuthenticationManager, IChatManager
     void openChat(ChatParticipator chatParticipator) throws RemoteException;
 
     void updateFriendList(ArrayList<String> friends);
+
+    ArrayList<ChatParticipator> getActiveChatSessions();
 }

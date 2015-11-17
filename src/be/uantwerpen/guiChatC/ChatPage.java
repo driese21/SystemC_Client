@@ -31,6 +31,7 @@ public class ChatPage extends JFrame {
         super(chatname);
         this.uiManagerInterface = uiManagerInterface;
         this.chatParticipator = chatParticipator;
+        System.out.println(chatParticipator.getId());
         lblInGesprekMet.setText(chatname);
         setContentPane(pnlRootPanel);
         pack();
@@ -61,7 +62,7 @@ public class ChatPage extends JFrame {
                 try {
                     friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
                     //client.invite(friendName);
-                    uiManagerInterface.sendInvite(friendName);
+                    //uiManagerInterface.sendInvite(chatParticipator, friendName);
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());

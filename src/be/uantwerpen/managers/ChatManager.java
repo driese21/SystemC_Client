@@ -59,9 +59,11 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
+        System.out.println("Received an invitation");
         ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername(), this);
         chatParticipator.addChatSession(chatSession);
         client.addSession(chatParticipator);
+        chatSession.joinSession(chatParticipator, false);
         uiManagerInterface.openChat(chatParticipator);
         return true;
     }

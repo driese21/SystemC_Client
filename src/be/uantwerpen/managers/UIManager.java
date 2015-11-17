@@ -73,21 +73,6 @@ public class UIManager implements UIManagerInterface {
         } else{
             throw new Exception("Invite is niet gelukt, dit is ongekend terrein!");
         }
-        /*//todo Check if this shit is legit or not, replace invite value with proper username
-        try {
-            IChatParticipator chatParticipator = chatManager.sendInvite(friendUserName);
-            if(chatParticipator!=null){
-                ChatPage chat = new ChatPage(chatParticipator.getChatName());
-                //chatMap.put(tempId, chat);
-                chatPageHashMap.put(chatParticipator, chat);
-            } else{
-                throw new Exception("Invite is niet gelukt, dit is ongekend terrein!");
-            }
-        } catch (RemoteException e) {
-            JOptionPane.showMessageDialog(null, "Remote exception!\n" + e.getMessage());
-        } catch (ClientNotOnlineException e) {
-            JOptionPane.showMessageDialog(null, "Deze user is niet online!");
-        }*/
     }
 
     /**
@@ -99,8 +84,13 @@ public class UIManager implements UIManagerInterface {
     public void openChat(ChatParticipator chatParticipator) throws RemoteException {
         ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
         chatPageHashMap.put(chatParticipator, chatPage);
-        System.out.println("");
+        System.out.println("hallo ik doe een chat open");
         updateHomePage();
+    }
+
+    @Override
+    public ArrayList<ChatParticipator> getActiveChatSessions() {
+        return new ArrayList<>(chatPageHashMap.keySet());
     }
 
     /**
@@ -110,20 +100,6 @@ public class UIManager implements UIManagerInterface {
     public void openChat(int id) {
         IChatParticipator chatParticipator = findParticipator(id);
         chatPageHashMap.get(chatParticipator).setVisible(true);
-    }
-
-    public void receiveMessage(int id, Message message){
-        //chatMap.get(id).receiveMessage(message);
-
-        //todo fix this
-        //chatPageHashMap.get(findParticipator(id)).receiveMessage(message);
-
-        /*Iterator it = chatPageHashMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            ChatParticipator cp = (ChatParticipator) pair.getKey();
-            if (cp.getId() == id) ((ChatPage)pair.getValue()).receiveMessage(message);
-        }*/
     }
 
     private ChatParticipator findParticipator(int id) {
@@ -137,13 +113,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     private void updateHomePage() {
-        ArrayList<ChatParticipator> openChats = new ArrayList<>();
-        Iterator iterator = chatPageHashMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            ChatParticipator cp = (ChatParticipator)iterator.next();
-            openChats.add(cp);
-        }
-        homePage.updateChatSession(openChats);
+        homePage.updateChats();
     }
 
     @Override
@@ -174,7 +144,9 @@ public class UIManager implements UIManagerInterface {
     public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         System.out.println("I want to invite " + friendName);
         ChatParticipator cp = chatManager.sendInvite(friendName);
-        if (cp == null) System.out.println("Something went wrong while inviting " + friendName);
+        if (cp != null)
+            openChat(cp);
+        else System.out.println("tis naar de kloten");
         return cp;
     }
 

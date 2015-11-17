@@ -45,6 +45,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
+        System.out.println(username + " wants to send " + msg);
         chat.addMessage(message);
         notifyParticipators(ChatNotificationType.NEWMESSAGE, message);
         return true;
@@ -82,8 +83,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      * @return true if the user is already in the list, false if it's not
      * @throws RemoteException
      */
-    @Override
-    public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
+    private synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator cp : participators)
             if (cp.getName().equalsIgnoreCase(participator.getName()))
                 return true; //already in chat
@@ -103,7 +103,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         System.out.println(participator.getName() + (silent ? " is trying to sneak in..." : " is joining"));
         //not in the list yet, so continue adding the new participator
         if (participators.add(participator)) {
-            notifyParticipators(ChatNotificationType.USERJOINED, participator);
+            //notifyParticipators(ChatNotificationType.USERJOINED, participator);
             return true;
         } else return false;
     }
