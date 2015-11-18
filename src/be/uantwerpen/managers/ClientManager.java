@@ -23,7 +23,7 @@ public class ClientManager implements IClientManager {
         this.chatManager = chatManager;
     }
 
-    public void openPassive(IChatManager chatManager) throws RemoteException {
+    public void openPassive() throws RemoteException {
         ClientListener clientListener = new ClientListener(chatManager, this);
         client.getClientSession().setClientListener(clientListener);
     }

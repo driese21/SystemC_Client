@@ -105,7 +105,7 @@ public class ChatManager implements IChatManager {
                 pushMessage(chatParticipator, msg);
             } else {
                 try {
-                    tryRecoverChat(chatParticipator);
+                    tryRecoverChat(chatParticipator, msg);
                 } catch (Exception e) {
                     if (e.getMessage().equalsIgnoreCase("Host was still reachable from server")) {
                         pushRetries = 0;
@@ -149,7 +149,7 @@ public class ChatManager implements IChatManager {
      * @param chatParticipator On which chatparticipator it should try to re-host the session
      * @throws Exception
      */
-    private void tryRecoverChat(ChatParticipator chatParticipator) throws Exception {
+    private void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception {
         System.out.println("host left, trying to take over...");
         IChatParticipator server = null;
         ArrayList<IChatParticipator> otherParticipators = chatParticipator.getOtherParticipators();
@@ -171,6 +171,9 @@ public class ChatManager implements IChatManager {
         for (IChatParticipator other : otherParticipators) {
             other.hostChanged(chatParticipator,chatParticipator.getClonedChatSession());
         }
+        //try again
+        pushRetries = 0;
+        pushMessage(chatParticipator, msg);
     }
 
     public void setUiManagerInterface(UIManagerInterface uiManagerInterface) {

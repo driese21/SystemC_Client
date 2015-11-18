@@ -11,7 +11,7 @@ import java.util.HashSet;
  * Created by Dries on 16/10/2015.
  */
 public class Client {
-    private String username,  fullName;
+    private String username, fullName;
     private HashSet<ChatParticipator> sessions;
     private IClientSession clientSession;
 

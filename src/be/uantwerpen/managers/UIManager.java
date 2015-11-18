@@ -85,35 +85,12 @@ public class UIManager implements UIManagerInterface {
         ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
         chatPageHashMap.put(chatParticipator, chatPage);
         System.out.println("hallo ik doe een chat open");
-        updateHomePage();
+        homePage.updateChats();
     }
 
     @Override
     public ArrayList<ChatParticipator> getActiveChatSessions() {
         return new ArrayList<>(chatPageHashMap.keySet());
-    }
-
-    /**
-     * GUI opens existing ChatSession using the id of a ChatParticipator
-     * @param id The ID of a ChatParticipator which is stored in the list
-     */
-    public void openChat(int id) {
-        IChatParticipator chatParticipator = findParticipator(id);
-        chatPageHashMap.get(chatParticipator).setVisible(true);
-    }
-
-    private ChatParticipator findParticipator(int id) {
-        Iterator it = chatPageHashMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            ChatParticipator cp = (ChatParticipator) pair.getKey();
-            if (cp.getId() == id) return cp;
-        }
-        return null;
-    }
-
-    private void updateHomePage() {
-        homePage.updateChats();
     }
 
     @Override
@@ -140,6 +117,14 @@ public class UIManager implements UIManagerInterface {
     //endregion
 
     //region ChatManager
+
+    /**
+     * Receives call from GUI to invite one of our friends
+     * @param friendName the friend we want to invite
+     * @return ChatParticipator if all is successful
+     * @throws RemoteException
+     * @throws ClientNotOnlineException
+     */
     @Override
     public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
         //System.out.println("I want to invite " + friendName);

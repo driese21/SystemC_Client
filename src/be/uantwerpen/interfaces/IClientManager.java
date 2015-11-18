@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by Dries on 3/11/2015.
  */
 public interface IClientManager {
-    void openPassive(IChatManager chatManager) throws RemoteException;
+    void openPassive() throws RemoteException;
 
     ArrayList<String> getFriends() throws RemoteException;
 
