@@ -17,15 +17,14 @@ import java.rmi.RemoteException;
 public class AuthenticationManager implements IAuthenticationManager {
     private Client client;
     private IClientManager clientManager;
-    private IChatManager chatManager;
+    //private IChatManager chatManager;
     private IServerListener serverListener;
 
     public AuthenticationManager() { }
 
-    public AuthenticationManager(IServerListener serverListener, Client client, IClientManager clientManager, IChatManager chatManager) {
+    public AuthenticationManager(IServerListener serverListener, Client client, IClientManager clientManager) {
         this.serverListener = serverListener;
         this.clientManager = clientManager;
-        this.chatManager = chatManager;
         this.client = client;
     }
 
@@ -74,7 +73,7 @@ public class AuthenticationManager implements IAuthenticationManager {
     }
 
     private void finalizeAuthentication(IClientSession ics) throws RemoteException {
-        clientManager.openPassive(chatManager);
+        clientManager.openPassive();
         new Thread(new StatusUpdater(ics)).start();
     }
 }

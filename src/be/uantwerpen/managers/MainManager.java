@@ -21,7 +21,7 @@ public class MainManager {
         this.client = new Client();
         this.chatManager = new ChatManager(client);
         this.clientManager = new ClientManager(chatManager, client);
-        this.authenticationManager = new AuthenticationManager(ConnectionLoader.getServer(), client, clientManager, chatManager);
+        this.authenticationManager = new AuthenticationManager(ConnectionLoader.getServer(), client, clientManager);
         this.uiManager = new UIManager(chatManager, clientManager, authenticationManager);
         //todo dit moet echt wel anders
         chatManager.setUiManagerInterface(this.uiManager);

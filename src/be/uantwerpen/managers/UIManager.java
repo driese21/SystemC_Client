@@ -195,7 +195,7 @@ public class UIManager implements UIManagerInterface {
 
     //region ClientManager
     @Override
-    public void openPassive(IChatManager chatManager) throws RemoteException {
+    public void openPassive() throws RemoteException {
         throw new NotImplementedException();
     }
 

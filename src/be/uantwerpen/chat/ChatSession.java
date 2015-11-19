@@ -45,7 +45,6 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
-        System.out.println(username + " wants to send " + msg);
         chat.addMessage(message);
         notifyParticipators(ChatNotificationType.NEWMESSAGE, message);
         return true;
@@ -59,9 +58,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, Message msg) throws RemoteException {
-        for (IChatParticipator participator : participators) {
-            participator.notifyListener(cnt, msg);
-        }
+        new Thread(new MessageDeliveryAgent(participators, msg, cnt)).start();
     }
 
     /**
@@ -72,9 +69,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
-        for (IChatParticipator participator : participators) {
-            participator.notifyListener(cnt, newParticipator);
-        }
+
     }
 
     /**
