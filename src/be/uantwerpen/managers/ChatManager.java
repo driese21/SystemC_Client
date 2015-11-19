@@ -42,7 +42,6 @@ public class ChatManager implements IChatManager {
         if (client.getClientSession().sendInvite(friendName, chs)) {
             //if invite was successfull, remember it, otherwise garbage
             client.addSession(chatParticipator);
-            System.out.println("[CHATMANAGER] adding new session");
             return chatParticipator;
         } else {
             System.out.println("[CHATMANAGER] invite failed!");
@@ -71,11 +70,10 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
-        System.out.println("Received an invitation");
         ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername(), this);
         chatParticipator.addChatSession(chatSession);
         client.addSession(chatParticipator);
-        chatSession.joinSession(chatParticipator, false);
+        chatSession.joinSession(chatParticipator);
         uiManagerInterface.openChat(chatParticipator);
         return true;
     }
@@ -155,7 +153,11 @@ public class ChatManager implements IChatManager {
         ArrayList<IChatParticipator> otherParticipators = chatParticipator.getOtherParticipators();
         //look for the server
         for (IChatParticipator participator : otherParticipators) {
-            if (participator.isServer()) { server = participator; break; }
+            try {
+                if (participator.isServer()) { server = participator; break; }
+            } catch (RemoteException re) {
+                System.out.println("can't reach this client ...");
+            }
         }
         if (server == null) throw new RemoteException("Server not found");
         if (!server.hostChat(chatParticipator)) throw new Exception("Host was still reachable from server");

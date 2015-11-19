@@ -32,7 +32,6 @@ public class ClientListener extends UnicastRemoteObject implements IClientListen
      */
     @Override
     public boolean initialHandshake(IChatSession otherChatSession) throws RemoteException {
-        System.out.println("Received an invite!!");
         return chatManager.invite(otherChatSession);
     }
 

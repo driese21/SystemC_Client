@@ -31,8 +31,8 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     public ChatSession(IChatParticipator participator) throws RemoteException {
         this();
-        joinSession(participator, true);
-        host = participator;
+        joinSession(participator);
+        this.host = participator;
     }
 
     /**
@@ -58,7 +58,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, Message msg) throws RemoteException {
-        new Thread(new MessageDeliveryAgent(participators, msg, cnt)).start();
+        new Thread(new DeliveryAgent(participators, msg, cnt)).start();
     }
 
     /**
@@ -69,39 +69,26 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
-
+        new Thread(new DeliveryAgent(participators, newParticipator, cnt)).start();
     }
 
     /**
-     * Used to check if a participator is already in the session
+     * Used to check if a participator is already in the session, if not add him
      * @param participator Said participator
-     * @return true if the user is already in the list, false if it's not
-     * @throws RemoteException
-     */
-    private synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
-        for (IChatParticipator cp : participators)
-            if (cp.getName().equalsIgnoreCase(participator.getName()))
-                return true; //already in chat
-        return false;
-    }
-
-    /**
-     * This gets invoked by a ChatParticipator, who wants to join this ChatSession
-     * @param participator A reference to said ChatParticipator
-     * @param silent If false, it will notify all other users (visibly)
-     * @return true if user successfully joined, false if something went wrong
+     * @return true if the user is already in the list or successfully joined, false if it's not
      * @throws RemoteException
      */
     @Override
-    public synchronized boolean joinSession(IChatParticipator participator, boolean silent) throws RemoteException {
-        if (joinSession(participator)) return true;
-        System.out.println(participator.getName() + (silent ? " is trying to sneak in..." : " is joining"));
-        //not in the list yet, so continue adding the new participator
+    public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
+        for (IChatParticipator cp : participators)
+            if (cp.getName().equalsIgnoreCase(participator.getName()))
+                return true; //already in chat
         if (participators.add(participator)) {
-            //notifyParticipators(ChatNotificationType.USERJOINED, participator);
+            notifyParticipators(ChatNotificationType.USERJOINED, participator);
             return true;
         } else return false;
     }
+
     @Override
     public IChatParticipator getHost() throws RemoteException {
         return host;

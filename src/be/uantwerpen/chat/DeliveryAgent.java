@@ -10,15 +10,22 @@ import java.util.stream.Collectors;
 /**
  * Created by Dries on 19/11/2015.
  */
-public class MessageDeliveryAgent extends Thread {
+public class DeliveryAgent extends Thread {
     private ArrayList<IChatParticipator> participators;
     private Message message;
+    private IChatParticipator newParticipator;
     private ChatNotificationType chatNotificationType;
 
-    public MessageDeliveryAgent(ArrayList<IChatParticipator> participators, Message message, ChatNotificationType cnt) {
+    public DeliveryAgent(ArrayList<IChatParticipator> participators, Message message, ChatNotificationType cnt) {
         this.participators = participators;
         this.message = message;
         this.chatNotificationType = cnt;
+    }
+
+    public DeliveryAgent(ArrayList<IChatParticipator> participators, IChatParticipator newParticipator, ChatNotificationType chatNotificationType) {
+        this.participators = participators;
+        this.newParticipator = newParticipator;
+        this.chatNotificationType = chatNotificationType;
     }
 
     private void deliver() {
@@ -26,10 +33,10 @@ public class MessageDeliveryAgent extends Thread {
         failedDelivery.addAll(participators.stream().filter(chatParticipator -> !deliver(chatParticipator)).collect(Collectors.toList()));
         if (failedDelivery.size()==0) return;
         int retries=0;
-        for (IChatParticipator participator : participators) {
+        for (IChatParticipator participator : failedDelivery) {
             while (retries<5) {
                 try {
-                    if (!deliver(participator)) System.out.println(participator + " is unreachabl...");
+                    if (!deliver(participator)) System.out.println(participator + " is unreachable...");
                     retries++;
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -42,7 +49,9 @@ public class MessageDeliveryAgent extends Thread {
 
     private boolean deliver(IChatParticipator participator) {
         try {
-            participator.notifyListener(chatNotificationType, message);
+            if (message != null) participator.notifyListener(chatNotificationType, message);
+            else if (newParticipator != null) participator.notifyListener(chatNotificationType, newParticipator);
+            else System.out.println("Both message and participator are null");
         } catch (RemoteException e) {
             return false;
         }

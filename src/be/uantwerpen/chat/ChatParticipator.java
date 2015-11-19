@@ -49,8 +49,6 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
         this.host = chatSession.getHost();
         this.hostName = host.getName();
         this.chatName = chatSession.getChatName();
-        //System.out.println("ADDING CHATSESSION, host is " + chatSession.getHost().getName());
-        //System.out.println("Chatsession name is " + chatSession.getChatName());
         this.clonedChatSession = new ChatSession(chatSession);
     }
 
@@ -81,7 +79,6 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
                     otherParticipators.add(newParticipator);
                     System.out.println(newParticipator.getName() + " just joined");
                 }
-                else System.out.println("ChatParticipator " + newParticipator.getName() + " is already registered...");
             } else if (cnt == ChatNotificationType.USERLEFT) {
                 if (participatorsExists(newParticipator)) otherParticipators.remove(newParticipator);
                 else System.out.println("doesn't exists, can't remove...");
@@ -160,9 +157,8 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
      */
     @Override
     public void hostChanged(IChatParticipator newHost, IChatSession newSession) throws RemoteException {
-        this.host = newHost;
-        this.chatSession = newSession;
-        this.chatSession.joinSession(this, true);
+        addChatSession(newSession);
+        this.chatSession.joinSession(this);
     }
 
     public ArrayList<IChatParticipator> getOtherParticipators() {
