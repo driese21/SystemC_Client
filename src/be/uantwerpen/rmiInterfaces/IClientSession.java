@@ -16,10 +16,11 @@ public interface IClientSession extends Remote {
     boolean addFriend(String friendName) throws RemoteException, UnknownClientException;
     ArrayList<String> getFriends() throws RemoteException;
     boolean deleteFriend(String friendName) throws RemoteException;
-    boolean sendInvite(String otherUsername, IChatSession ics) throws RemoteException, ClientNotOnlineException;
+    IChatSession sendInvite(String otherUsername, IChatSession ics) throws RemoteException, UnknownClientException;
     boolean invite(IChatSession ics) throws AlreadyBoundException, RemoteException;
     void setClientListener(IClientListener ici) throws RemoteException;
     String getUsername() throws RemoteException;
     String getFullname() throws RemoteException;
+    ArrayList<IChatSession> getOfflineMessage() throws RemoteException;
 }
 

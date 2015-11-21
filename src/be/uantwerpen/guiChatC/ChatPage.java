@@ -2,7 +2,8 @@ package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.client.Client;
-import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.interfaces.managers.UIManagerInterface;
+import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
 import javax.swing.*;
@@ -25,13 +26,10 @@ public class ChatPage extends JFrame {
     private JLabel lblInGesprekMet;
     private String friendName;
 
-    public Client client;
-
     public ChatPage(String chatname, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) {
         super(chatname);
         this.uiManagerInterface = uiManagerInterface;
         this.chatParticipator = chatParticipator;
-        System.out.println(chatParticipator.getId());
         lblInGesprekMet.setText(chatname);
         setContentPane(pnlRootPanel);
         pack();
@@ -39,6 +37,10 @@ public class ChatPage extends JFrame {
         setVisible(true);
         setLocationRelativeTo(null);
         addListeners();
+    }
+
+    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, IChatSession ics) {
+
     }
 
     public void addListeners() {
@@ -61,7 +63,7 @@ public class ChatPage extends JFrame {
 
                 try {
                     friendName = JOptionPane.showInputDialog(ChatPage.this, "Vul naam vriend in:");
-                    uiManagerInterface.sendInvite(chatParticipator, friendName);
+                    uiManagerInterface.inviteToSession(chatParticipator, friendName);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ChatPage.this, ex.getMessage());
                 }

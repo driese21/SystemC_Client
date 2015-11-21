@@ -1,4 +1,4 @@
-package be.uantwerpen.interfaces;
+package be.uantwerpen.interfaces.managers;
 
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 

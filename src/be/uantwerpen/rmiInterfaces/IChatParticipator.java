@@ -1,6 +1,5 @@
 package be.uantwerpen.rmiInterfaces;
 
-import be.uantwerpen.chat.Message;
 import be.uantwerpen.enums.ChatNotificationType;
 
 import java.rmi.Remote;
@@ -13,7 +12,7 @@ public interface IChatParticipator extends Remote {
     void notifyListener(ChatNotificationType cnt, IMessage msg) throws RemoteException;
     void notifyListener(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException;
     void addChatSession(IChatSession chatSession) throws RemoteException;
-    String getName() throws RemoteException;
+    String getUserName() throws RemoteException;
     int getId() throws RemoteException;
     String getChatName() throws RemoteException;
     boolean isServer() throws RemoteException;

@@ -1,8 +1,7 @@
 package be.uantwerpen.client;
 
-import be.uantwerpen.enums.ClientStatusType;
-import be.uantwerpen.interfaces.IChatManager;
-import be.uantwerpen.interfaces.IClientManager;
+import be.uantwerpen.interfaces.managers.IChatManager;
+import be.uantwerpen.interfaces.managers.IClientManager;
 import be.uantwerpen.rmiInterfaces.IClientListener;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 

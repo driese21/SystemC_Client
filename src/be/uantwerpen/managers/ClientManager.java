@@ -3,9 +3,10 @@ package be.uantwerpen.managers;
 import be.uantwerpen.client.ClientListener;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.exceptions.UnknownClientException;
-import be.uantwerpen.interfaces.IChatManager;
-import be.uantwerpen.interfaces.IClientManager;
-import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.interfaces.managers.IChatManager;
+import be.uantwerpen.interfaces.managers.IClientManager;
+import be.uantwerpen.interfaces.managers.UIManagerInterface;
+import be.uantwerpen.rmiInterfaces.IChatSession;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -50,5 +51,10 @@ public class ClientManager implements IClientManager {
     @Override
     public void friendListUpdated() throws RemoteException {
         uiManagerInterface.updateFriendList(getFriends());
+    }
+
+    @Override
+    public ArrayList<IChatSession> getOfflineMessages() throws RemoteException {
+        return client.getClientSession().getOfflineMessage();
     }
 }

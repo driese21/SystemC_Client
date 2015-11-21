@@ -1,6 +1,6 @@
 package be.uantwerpen.guiChatC;
 
-import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.interfaces.managers.UIManagerInterface;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

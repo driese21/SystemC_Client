@@ -6,8 +6,9 @@ import be.uantwerpen.client.Client;
 import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
-import be.uantwerpen.interfaces.IChatManager;
-import be.uantwerpen.interfaces.UIManagerInterface;
+import be.uantwerpen.exceptions.UnknownClientException;
+import be.uantwerpen.interfaces.managers.IChatManager;
+import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
@@ -35,30 +36,36 @@ public class ChatManager implements IChatManager {
      * @throws ClientNotOnlineException
      */
     @Override
-    public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+    public ChatParticipator sendInvite(String friendName) throws RemoteException, UnknownClientException {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername(), this);
         ChatSession chs = new ChatSession(chatParticipator);
-        chatParticipator.addChatSession(chs);
-        if (client.getClientSession().sendInvite(friendName, chs)) {
-            //if invite was successfull, remember it, otherwise garbage
+        IChatSession serverSession = client.getClientSession().sendInvite(friendName, chs);
+        //if serversession is null, then we can store the ChatSession
+        if (serverSession == null) {
+            chatParticipator.addChatSession(chs);
             client.addSession(chatParticipator);
+            System.out.println("This is an online session, I'm hosting!");
             return chatParticipator;
         } else {
-            System.out.println("[CHATMANAGER] invite failed!");
+            chatParticipator.addChatSession(serverSession);
+            serverSession.joinSession(chatParticipator);
+            System.out.println("This is an offline session, server is hosting!");
+            return chatParticipator;
         }
-        return null;
     }
 
     /**
-     * Invite another client to an existing chatsession
-     * @param cp the participator that's in a given chatsession
+     * Invites another client to an existing ChatSession
+     * @param cp the participator that's in a given ChatSession
      * @param friendName the friend we want to invite
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
     @Override
-    public boolean sendInvite(ChatParticipator cp, String friendName) throws RemoteException, ClientNotOnlineException {
-        return client.getClientSession().sendInvite(friendName, cp.getChatSession());
+    public boolean inviteToSession(ChatParticipator cp, String friendName) throws RemoteException, UnknownClientException {
+        IChatSession chatSession = client.getClientSession().sendInvite(friendName, cp.getChatSession());
+        if (chatSession == null) return true;
+        else throw new RemoteException("This appears to be an offline ChatSession, can't invite other users");
     }
 
     /**
@@ -86,7 +93,7 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public void pushMessage(ChatParticipator chatParticipator, String msg) throws RemoteException {
-        String username = chatParticipator.getName();
+        String username = chatParticipator.getUserName();
         IChatSession iChatSession = chatParticipator.getChatSession();
         try {
             iChatSession.newMessage(msg, username);
@@ -162,7 +169,7 @@ public class ChatManager implements IChatManager {
         if (server == null) throw new RemoteException("Server not found");
         if (!server.hostChat(chatParticipator)) throw new Exception("Host was still reachable from server");
         for (int i=0;i<otherParticipators.size();i++) {
-            if (otherParticipators.get(i).getName().equalsIgnoreCase(chatParticipator.getHostName())) {
+            if (otherParticipators.get(i).getUserName().equalsIgnoreCase(chatParticipator.getHostName())) {
                 otherParticipators.remove(i);
                 break;
             }

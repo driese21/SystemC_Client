@@ -1,6 +1,7 @@
-package be.uantwerpen.interfaces;
+package be.uantwerpen.interfaces.managers;
 
 import be.uantwerpen.exceptions.UnknownClientException;
+import be.uantwerpen.rmiInterfaces.IChatSession;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -18,4 +19,6 @@ public interface IClientManager {
     boolean deleteFriend(String friendName) throws RemoteException;
 
     void friendListUpdated() throws RemoteException;
+
+    ArrayList<IChatSession> getOfflineMessages() throws RemoteException;
 }

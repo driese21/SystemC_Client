@@ -1,7 +1,7 @@
 package be.uantwerpen.chat;
 
 import be.uantwerpen.enums.ChatNotificationType;
-import be.uantwerpen.interfaces.IChatManager;
+import be.uantwerpen.interfaces.managers.IChatManager;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
@@ -47,7 +47,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     public void addChatSession(IChatSession chatSession) throws RemoteException {
         this.chatSession = chatSession;
         this.host = chatSession.getHost();
-        this.hostName = host.getName();
+        this.hostName = host.getUserName();
         this.chatName = chatSession.getChatName();
         this.clonedChatSession = new ChatSession(chatSession);
     }
@@ -77,7 +77,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
             if (cnt == ChatNotificationType.USERJOINED) {
                 if (!participatorsExists(newParticipator)) {
                     otherParticipators.add(newParticipator);
-                    System.out.println(newParticipator.getName() + " just joined");
+                    System.out.println(newParticipator.getUserName() + " just joined");
                 }
             } else if (cnt == ChatNotificationType.USERLEFT) {
                 if (participatorsExists(newParticipator)) otherParticipators.remove(newParticipator);
@@ -94,7 +94,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
      */
     private boolean participatorsExists(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator chatParticipator : otherParticipators) {
-            if (chatParticipator.getName().equalsIgnoreCase(participator.getName())) return true;
+            if (chatParticipator.getUserName().equalsIgnoreCase(participator.getUserName())) return true;
         }
         return false;
     }
@@ -104,7 +104,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
      * @throws RemoteException
      */
     @Override
-    public String getName() throws RemoteException {
+    public String getUserName() throws RemoteException {
         return username;
     }
 
@@ -184,5 +184,16 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
     @Override
     public String toString() {
         return chatName;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        ChatParticipator b = (ChatParticipator) obj;
+        return username.equalsIgnoreCase(b.username);
     }
 }

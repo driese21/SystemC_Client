@@ -1,9 +1,6 @@
 package be.uantwerpen;
 
-import be.uantwerpen.guiChatC.HomePage;
-import be.uantwerpen.interfaces.UIManagerInterface;
 import be.uantwerpen.managers.MainManager;
-import be.uantwerpen.managers.UIManager;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;

@@ -1,7 +1,6 @@
 package be.uantwerpen.managers;
 
 import be.uantwerpen.chat.ChatParticipator;
-import be.uantwerpen.chat.Message;
 import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
@@ -11,11 +10,10 @@ import be.uantwerpen.guiChatC.ChatPage;
 import be.uantwerpen.guiChatC.HomePage;
 import be.uantwerpen.guiChatC.Login;
 import be.uantwerpen.guiChatC.Register;
-import be.uantwerpen.interfaces.IAuthenticationManager;
-import be.uantwerpen.interfaces.IChatManager;
-import be.uantwerpen.interfaces.IClientManager;
-import be.uantwerpen.interfaces.UIManagerInterface;
-import be.uantwerpen.rmiInterfaces.IChatParticipator;
+import be.uantwerpen.interfaces.managers.IAuthenticationManager;
+import be.uantwerpen.interfaces.managers.IChatManager;
+import be.uantwerpen.interfaces.managers.IClientManager;
+import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -23,8 +21,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Creator: Seb
@@ -63,28 +59,23 @@ public class UIManager implements UIManagerInterface {
         this.homePage = new HomePage(this);
     }
 
-    @Override
-    public void openChat(String friendUserName) throws Exception {
-        ChatParticipator chatParticipator = chatManager.sendInvite(friendUserName);
-        if(chatParticipator!=null){
-            ChatPage chat = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
-            //chatMap.put(tempId, chat);
-            chatPageHashMap.put(chatParticipator, chat);
-        } else{
-            throw new Exception("Invite is niet gelukt, dit is ongekend terrein!");
-        }
-    }
-
     /**
-     * GUI opens a new ChatPage because we received an invitation
+     * Open ChatPage, either from GUI or because we received an invitiation
      * @param chatParticipator Reference to a ChatParticipator created by ChatManager
      * @throws RemoteException
      */
     @Override
     public void openChat(ChatParticipator chatParticipator) throws RemoteException {
-        ChatPage chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
-        chatPageHashMap.put(chatParticipator, chatPage);
-        System.out.println("hallo ik doe een chat open");
+        ChatPage chatPage = chatPageHashMap.get(chatParticipator);
+        if (chatPage != null) {
+            System.out.println("This ChatPage exists, let's set it visible");
+            chatPage.setVisible(true);
+            chatPage.toFront();
+        } else {
+            System.out.println("This ChatPage does not exist yet, creating new one");
+            chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
+            chatPageHashMap.put(chatParticipator, chatPage);
+        }
         homePage.updateChats();
     }
 
@@ -96,6 +87,11 @@ public class UIManager implements UIManagerInterface {
     @Override
     public void updateFriendList(ArrayList<String> friends) {
         homePage.updateFriendList(friends);
+    }
+
+    @Override
+    public ArrayList<IChatSession> getOfflineMessages() throws RemoteException {
+        return clientManager.getOfflineMessages();
     }
 
     //region AuthenticationManager
@@ -126,7 +122,7 @@ public class UIManager implements UIManagerInterface {
      * @throws ClientNotOnlineException
      */
     @Override
-    public ChatParticipator sendInvite(String friendName) throws RemoteException, ClientNotOnlineException {
+    public ChatParticipator sendInvite(String friendName) throws RemoteException, UnknownClientException {
         //System.out.println("I want to invite " + friendName);
         ChatParticipator cp = chatManager.sendInvite(friendName);
         if (cp != null)
@@ -144,8 +140,8 @@ public class UIManager implements UIManagerInterface {
      * @throws ClientNotOnlineException
      */
     @Override
-    public boolean sendInvite(ChatParticipator cp, String friendName) throws RemoteException, ClientNotOnlineException {
-        return chatManager.sendInvite(cp, friendName);
+    public boolean inviteToSession(ChatParticipator cp, String friendName) throws RemoteException, UnknownClientException, ClientNotOnlineException {
+        return chatManager.inviteToSession(cp, friendName);
     }
 
     @Override

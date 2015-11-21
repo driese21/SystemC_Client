@@ -3,9 +3,8 @@ package be.uantwerpen.managers;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.client.StatusUpdater;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
-import be.uantwerpen.interfaces.IAuthenticationManager;
-import be.uantwerpen.interfaces.IChatManager;
-import be.uantwerpen.interfaces.IClientManager;
+import be.uantwerpen.interfaces.managers.IAuthenticationManager;
+import be.uantwerpen.interfaces.managers.IClientManager;
 import be.uantwerpen.rmiInterfaces.IServerListener;
 import be.uantwerpen.rmiInterfaces.IClientSession;
 
@@ -17,7 +16,6 @@ import java.rmi.RemoteException;
 public class AuthenticationManager implements IAuthenticationManager {
     private Client client;
     private IClientManager clientManager;
-    //private IChatManager chatManager;
     private IServerListener serverListener;
 
     public AuthenticationManager() { }

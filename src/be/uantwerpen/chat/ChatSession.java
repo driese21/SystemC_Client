@@ -12,18 +12,20 @@ import java.util.ArrayList;
  * Created by Dries on 16/10/2015.
  */
 public class ChatSession extends UnicastRemoteObject implements IChatSession {
-    private Chat chat;
+    //private Chat chat;
     private ArrayList<IChatParticipator> participators;
     private IChatParticipator host;
     private String chatName;
+    private ArrayList<Message> messages;
 
     public ChatSession() throws RemoteException {
-        chat = new Chat();
-        participators = new ArrayList<>();
+        //chat = new Chat();
+        this.participators = new ArrayList<>();
+        this.messages = new ArrayList<>();
     }
 
     public ChatSession(IChatSession chatSession) throws RemoteException {
-        this.chat = new Chat();
+        //this.chat = new Chat();
         this.participators = chatSession.getOtherParticipators();
         this.host = chatSession.getHost();
         this.chatName = chatSession.getChatName();
@@ -45,7 +47,8 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
-        chat.addMessage(message);
+        //chat.addMessage(message);
+        messages.add(message);
         notifyParticipators(ChatNotificationType.NEWMESSAGE, message);
         return true;
     }
@@ -81,7 +84,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public synchronized boolean joinSession(IChatParticipator participator) throws RemoteException {
         for (IChatParticipator cp : participators)
-            if (cp.getName().equalsIgnoreCase(participator.getName()))
+            if (cp.getUserName().equalsIgnoreCase(participator.getUserName()))
                 return true; //already in chat
         if (participators.add(participator)) {
             notifyParticipators(ChatNotificationType.USERJOINED, participator);
@@ -92,11 +95,6 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public IChatParticipator getHost() throws RemoteException {
         return host;
-    }
-
-    @Override
-    public String getChatMessages() throws RemoteException {
-        return chat.toString();
     }
 
     @Override
@@ -113,7 +111,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     public void chooseChatName() throws RemoteException {
         StringBuilder sb = new StringBuilder();
         for (IChatParticipator participator : participators) {
-            if (!participator.isServer()) sb.append(participator.getName());
+            if (!participator.isServer()) sb.append(participator.getUserName());
         }
         setChatName(sb.toString());
     }
@@ -135,15 +133,4 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     public ArrayList<IChatParticipator> getOtherParticipators() throws RemoteException {
         return participators;
     }
-
-    @Override
-    public void setParticipators(ArrayList<IChatParticipator> participators) throws RemoteException {
-        this.participators = participators;
-    }
-
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
-
-
 }
