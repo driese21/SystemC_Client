@@ -22,7 +22,6 @@ public class HomePage extends JFrame {
     private JButton btnAddFriend;
     private JButton btnDeleteFriend;
     private JButton btnLogOff;
-    private JTextField txtSearchConversation;
 
     private DefaultListModel conversationListModel;
     private JList lstConversation;
@@ -32,7 +31,6 @@ public class HomePage extends JFrame {
 
     private String friendName;
 
-    private String chatName;
     private ArrayList<ChatParticipator> gesprekken;
 
     public HomePage(UIManagerInterface manager) {
@@ -54,12 +52,6 @@ public class HomePage extends JFrame {
     }
 
     public void addListeners(){
-        txtSearchConversation.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
         btnAddFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,7 +109,6 @@ public class HomePage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox jComboBox = (JComboBox) e.getSource();
-                //System.out.println(e.getActionCommand());
                 try {
                     manager.sendInvite(jComboBox.getSelectedItem().toString());
                 } catch (RemoteException e1) {
@@ -145,6 +136,7 @@ public class HomePage extends JFrame {
         System.out.println("Updating conversation list");
         conversationListModel.clear();
         ArrayList<ChatParticipator> participators = manager.getActiveChatSessions();
+        System.out.println("Amount of sessions I joined: " + participators.size());
         participators.forEach(conversationListModel::addElement);
     }
 

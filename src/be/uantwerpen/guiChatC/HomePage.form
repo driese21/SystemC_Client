@@ -71,17 +71,9 @@
           <text value="Gesprekkenlijst"/>
         </properties>
       </component>
-      <component id="f655f" class="javax.swing.JTextField" binding="txtSearchConversation">
-        <constraints>
-          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
       <component id="6eff" class="javax.swing.JComboBox" binding="cmbFriends">
         <constraints>
-          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>

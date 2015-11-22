@@ -30,6 +30,7 @@ public class AuthenticationManager implements IAuthenticationManager {
     public boolean register(String username, String password, String fullName) {
         try {
             IClientSession ics = serverListener.register(username,password,fullName);
+
             if (ics == null) {
                 System.out.println("hier klopt iets niet");
                 return false;

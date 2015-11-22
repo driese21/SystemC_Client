@@ -12,20 +12,17 @@ import java.util.ArrayList;
  * Created by Dries on 16/10/2015.
  */
 public class ChatSession extends UnicastRemoteObject implements IChatSession {
-    //private Chat chat;
     private ArrayList<IChatParticipator> participators;
     private IChatParticipator host;
     private String chatName;
     private ArrayList<Message> messages;
 
     public ChatSession() throws RemoteException {
-        //chat = new Chat();
         this.participators = new ArrayList<>();
         this.messages = new ArrayList<>();
     }
 
     public ChatSession(IChatSession chatSession) throws RemoteException {
-        //this.chat = new Chat();
         this.participators = chatSession.getOtherParticipators();
         this.host = chatSession.getHost();
         this.chatName = chatSession.getChatName();
@@ -47,7 +44,6 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public synchronized boolean newMessage(String msg, String username) throws RemoteException {
         Message message = new Message(msg, username);
-        //chat.addMessage(message);
         messages.add(message);
         notifyParticipators(ChatNotificationType.NEWMESSAGE, message);
         return true;
@@ -73,6 +69,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public void notifyParticipators(ChatNotificationType cnt, IChatParticipator newParticipator) throws RemoteException {
         new Thread(new DeliveryAgent(participators, newParticipator, cnt)).start();
+        chooseChatName();
     }
 
     /**

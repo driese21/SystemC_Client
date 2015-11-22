@@ -12,6 +12,6 @@ import java.rmi.RemoteException;
  */
 public class ConnectionLoader {
     public static IServerListener getServer() throws RemoteException, NotBoundException, MalformedURLException {
-        return (IServerListener) Naming.lookup("//" + "127.0.0.1:11337" + "/ChatServer");
+        return (IServerListener) Naming.lookup("//" + "109.128.0.13:11337" + "/ChatServer");
     }
 }
