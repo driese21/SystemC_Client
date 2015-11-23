@@ -21,4 +21,6 @@ public interface IClientManager {
     void friendListUpdated() throws RemoteException;
 
     ArrayList<IChatSession> getOfflineMessages() throws RemoteException;
+
+    void offlineMessagesRead() throws RemoteException;
 }

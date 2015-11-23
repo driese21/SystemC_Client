@@ -57,4 +57,9 @@ public class ClientManager implements IClientManager {
     public ArrayList<IChatSession> getOfflineMessages() throws RemoteException {
         return client.getClientSession().getOfflineMessage();
     }
+
+    @Override
+    public void offlineMessagesRead() throws RemoteException {
+        client.getClientSession().offlineMessagesRead();
+    }
 }

@@ -16,8 +16,8 @@ import be.uantwerpen.interfaces.managers.IClientManager;
 import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,10 +33,6 @@ public class UIManager implements UIManagerInterface {
     private IChatManager chatManager;
     private IClientManager clientManager;
     private IAuthenticationManager authenticationManager;
-
-    /*public UIManager(){
-        openLogin();
-    }*/
 
     public UIManager(IChatManager chatManager, IClientManager clientManager, IAuthenticationManager authenticationManager) {
         this.chatPageHashMap = new HashMap<>();
@@ -69,7 +65,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     /**
-     * Open ChatPage, either from GUI or because we received an invitiation
+     * Open ChatPage, either from GUI or because we received an invitation
      * @param chatParticipator Reference to a ChatParticipator created by ChatManager
      * @throws RemoteException
      */
@@ -113,6 +109,7 @@ public class UIManager implements UIManagerInterface {
             sb.append(message.getMessage());
             messages.add(sb.toString());
         }
+
         return messages;
     }
 
@@ -124,11 +121,6 @@ public class UIManager implements UIManagerInterface {
     @Override
     public void updateFriendList(ArrayList<String> friends) {
         homePage.updateFriendList(friends);
-    }
-
-    @Override
-    public ArrayList<IChatSession> getOfflineMessages() throws RemoteException {
-        return clientManager.getOfflineMessages();
     }
 
     //region AuthenticationManager
@@ -249,6 +241,16 @@ public class UIManager implements UIManagerInterface {
     @Override
     public void friendListUpdated() throws RemoteException {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public ArrayList<IChatSession> getOfflineMessages() throws RemoteException {
+        return clientManager.getOfflineMessages();
+    }
+
+    @Override
+    public void offlineMessagesRead() throws RemoteException {
+        clientManager.offlineMessagesRead();
     }
 
     //endregion
