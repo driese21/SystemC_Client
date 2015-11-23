@@ -3,6 +3,7 @@ package be.uantwerpen.chat;
 import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
+import be.uantwerpen.rmiInterfaces.IMessage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -129,5 +130,10 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
     @Override
     public ArrayList<IChatParticipator> getOtherParticipators() throws RemoteException {
         return participators;
+    }
+
+    @Override
+    public ArrayList<IMessage> getMessages() throws RemoteException {
+        return new ArrayList<>(messages);
     }
 }

@@ -6,6 +6,7 @@ import be.uantwerpen.exceptions.InvalidCredentialsException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 /**
  * Created by Michiel on 30/10/2015.
@@ -53,6 +54,8 @@ public class Login extends JFrame {
                     } catch (InvalidCredentialsException ex) {
                         JOptionPane.showMessageDialog(null,"De gebruiker bestaat nog niet, probeer te registreren!");
                         System.out.println(ex.getMessage());
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
                     }
                 }
             }

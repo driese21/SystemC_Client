@@ -55,8 +55,17 @@ public class UIManager implements UIManagerInterface {
         Register registerForm = new Register(this);
     }
 
-    public void openHome(String user){
+    public void openHome(String user) throws RemoteException {
         this.homePage = new HomePage(this);
+        ArrayList<IChatSession> offlineSessions = getOfflineMessages();
+        if (offlineSessions == null) {
+            System.out.println("I don't have any offline messages");
+            return;
+        }
+        System.out.println("I received offline messages");
+        for (IChatSession iChatSession : offlineSessions) {
+            openChat(iChatSession);
+        }
     }
 
     /**
@@ -79,6 +88,34 @@ public class UIManager implements UIManagerInterface {
         homePage.updateChats();
     }
 
+    /**
+     * Opens a chat windows per offline ChatSession we received
+     * @param offlineSession A reference to the server object
+     * @throws RemoteException
+     */
+    @Override
+    public void openChat(IChatSession offlineSession) throws RemoteException {
+        ChatPage offlineChat = new ChatPage(offlineSession.getChatName(), this, offlineSession);
+    }
+
+    @Override
+    public ArrayList<String> getMessages(IChatSession ics) throws RemoteException {
+        ArrayList<String> messages = new ArrayList<>();
+        StringBuilder sb;
+        for (IMessage message : ics.getMessages()) {
+            sb = new StringBuilder();
+            sb.append("[");
+            sb.append(message.getDate());
+            sb.append("]");
+            sb.append(" ");
+            sb.append(message.getUsername());
+            sb.append(": ");
+            sb.append(message.getMessage());
+            messages.add(sb.toString());
+        }
+        return messages;
+    }
+
     @Override
     public ArrayList<ChatParticipator> getActiveChatSessions() {
         return new ArrayList<>(chatPageHashMap.keySet());
@@ -96,7 +133,7 @@ public class UIManager implements UIManagerInterface {
 
     //region AuthenticationManager
     @Override
-    public boolean register(String username, String password, String fullName) {
+    public boolean register(String username, String password, String fullName) throws RemoteException {
         if (authenticationManager.register(username, password, fullName)) {
             openHome(username);
             return true;
@@ -104,7 +141,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     @Override
-    public boolean login(String username, String password) throws InvalidCredentialsException {
+    public boolean login(String username, String password) throws InvalidCredentialsException, RemoteException {
         if (authenticationManager.login(username,password)) {
             openHome(username);
             return true;
@@ -123,7 +160,6 @@ public class UIManager implements UIManagerInterface {
      */
     @Override
     public ChatParticipator sendInvite(String friendName) throws RemoteException, UnknownClientException {
-        //System.out.println("I want to invite " + friendName);
         ChatParticipator cp = chatManager.sendInvite(friendName);
         if (cp != null)
             openChat(cp);

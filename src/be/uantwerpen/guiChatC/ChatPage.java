@@ -1,7 +1,6 @@
 package be.uantwerpen.guiChatC;
 
 import be.uantwerpen.chat.ChatParticipator;
-import be.uantwerpen.client.Client;
 import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * Created by Djamo on 30/10/2015.
@@ -26,11 +26,11 @@ public class ChatPage extends JFrame {
     private JLabel lblInGesprekMet;
     private String friendName;
 
-    public ChatPage(String chatname, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) {
-        super(chatname);
+    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) {
+        super(chatName);
         this.uiManagerInterface = uiManagerInterface;
         this.chatParticipator = chatParticipator;
-        lblInGesprekMet.setText(chatname);
+        lblInGesprekMet.setText(chatName);
         setContentPane(pnlRootPanel);
         pack();
         //  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +40,23 @@ public class ChatPage extends JFrame {
     }
 
     public ChatPage(String chatName, UIManagerInterface uiManagerInterface, IChatSession ics) {
-
+        super(chatName);
+        this.uiManagerInterface = uiManagerInterface;
+        try {
+            ArrayList<String> messages = uiManagerInterface.getMessages(ics);
+            for (String msg : messages) {
+                txtConversation.append(msg);
+                txtConversation.append("\n");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        lblInGesprekMet.setText(chatName);
+        setContentPane(pnlRootPanel);
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+        setLocationRelativeTo(null);
     }
 
     public void addListeners() {

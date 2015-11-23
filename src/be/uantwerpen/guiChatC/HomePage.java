@@ -41,7 +41,7 @@ public class HomePage extends JFrame {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        conversationListModel = new DefaultListModel();
+        this.conversationListModel = new DefaultListModel();
         lstConversation.setModel(conversationListModel);
         setContentPane(pnlRootPanel);
         pack();
