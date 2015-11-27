@@ -34,6 +34,12 @@ public class Login extends JFrame {
     }
 
     private void addListeners() {
+        pwfPW.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnLogin.doClick();
+            }
+        });
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

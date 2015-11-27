@@ -41,6 +41,7 @@ public class Register extends JFrame {
     }
 
     private void addListeners() {
+
         btnRandomUser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

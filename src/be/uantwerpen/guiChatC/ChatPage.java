@@ -24,10 +24,12 @@ public class ChatPage extends JFrame {
     private JTextField txtMessage;
     private JTextArea txtConversation;
     private JLabel lblInGesprekMet;
+    private JLabel lblMe;
     private String friendName;
 
-    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) {
+    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, ChatParticipator chatParticipator) throws RemoteException {
         super(chatName);
+        lblMe.setText(chatParticipator.getUserName());
         this.uiManagerInterface = uiManagerInterface;
         this.chatParticipator = chatParticipator;
         lblInGesprekMet.setText(chatName);
@@ -39,8 +41,10 @@ public class ChatPage extends JFrame {
         addListeners();
     }
 
-    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, IChatSession ics) {
+    //offline chatsessie
+    public ChatPage(String chatName, UIManagerInterface uiManagerInterface, IChatSession ics) throws RemoteException {
         super(chatName);
+        lblMe.setText(chatParticipator.getUserName());
         this.uiManagerInterface = uiManagerInterface;
         try {
             ArrayList<String> messages = uiManagerInterface.getMessages(ics);
