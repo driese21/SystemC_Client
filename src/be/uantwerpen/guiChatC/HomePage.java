@@ -31,10 +31,11 @@ public class HomePage extends JFrame {
 
     private String friendName;
 
+
     private ArrayList<ChatParticipator> gesprekken;
 
-    public HomePage(UIManagerInterface manager) {
-        super("HomePage");
+    public HomePage(UIManagerInterface manager, String name) {
+        super("HomePage of " + name);
         this.manager = manager;
         try {
             updateFriendList(manager.getFriends());
@@ -140,4 +141,7 @@ public class HomePage extends JFrame {
         participators.forEach(conversationListModel::addElement);
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }

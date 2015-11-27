@@ -52,7 +52,7 @@ public class UIManager implements UIManagerInterface {
     }
 
     public void openHome(String user) throws RemoteException {
-        this.homePage = new HomePage(this);
+        this.homePage = new HomePage(this, user);
         ArrayList<IChatSession> offlineSessions = getOfflineMessages();
         if (offlineSessions == null) {
             System.out.println("I don't have any offline messages");
