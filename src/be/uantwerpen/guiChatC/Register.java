@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Michiel on 30/10/2015.
@@ -22,6 +24,7 @@ public class Register extends JFrame {
     private JPanel pnlRegister;
     private JPasswordField pwfPw;
     private JPasswordField pwfConfirmPw;
+    private JButton btnRandomUser;
 
     public Register(UIManagerInterface manager) {
         super("Nieuwe gebruiker registreren");
@@ -38,6 +41,24 @@ public class Register extends JFrame {
     }
 
     private void addListeners() {
+        btnRandomUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] peoples = {"Bob", "Jill", "Tom", "Brandon","Jef","Jos","Jan","Danny","Sebastiaan","Michiel","Dries","Djamo","Willem","Frederik","Anthony","Stijn","Jonas","Shaniqua","Tyrone","Tyrell","Micheal"};
+
+                List<String> names = Arrays.asList(peoples);
+                int index = new Random().nextInt(names.size());
+                String name = names.get(index);
+                txtFullName.setText(name);
+                txtUserName.setText(name+"@chatC.be");
+                pwfConfirmPw.setText("test");
+                pwfPw.setText("test");
+
+              //  JOptionPane.showMessageDialog(Register.this, "Uw naam is:" + name);
+
+
+            }
+        });
         btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
