@@ -44,7 +44,7 @@ public class Register extends JFrame {
         btnRandomUser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String[] peoples = {"Bob", "Jill", "Tom", "Brandon","Jef","Jos","Jan","Danny","Sebastiaan","Michiel","Dries","Djamo","Willem","Frederik","Anthony","Stijn","Jonas","Shaniqua","Tyrone","Tyrell","Micheal"};
+                String[] peoples = {"Bob", "Jill", "Tom", "Brandon","Jef","Jos","Jan","Danny","Sebastiaan","Michiel","Dries","Djamo","Willem","Frederik","Anthony","Stijn","Jonas","Shaniqua","Tyrone","Tyrell","Micheal","Philip","Tywinn","Charrls","MVP","Gwuido","Luc","SnelleRuddi","Ron","Harry","Hermelien","Willy"};
 
                 List<String> names = Arrays.asList(peoples);
                 int index = new Random().nextInt(names.size());
