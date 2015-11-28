@@ -59,9 +59,9 @@ public class AuthenticationManager implements IAuthenticationManager {
                 System.out.println("hier klopt ook iets niet");
                 return false;
             }
-            //client = new Client(username,ics.getFullname(),ics);
+            //client = new Client(username,ics.getFullName(),ics);
             client.setUsername(username);
-            client.setFullName(ics.getFullname());
+            client.setFullName(ics.getFullName());
             client.setClientSession(ics);
             finalizeAuthentication(ics);
         } catch (RemoteException e) {
