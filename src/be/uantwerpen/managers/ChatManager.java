@@ -1,6 +1,7 @@
 package be.uantwerpen.managers;
 
 import be.uantwerpen.chat.ChatParticipator;
+import be.uantwerpen.chat.ChatParticipatorKey;
 import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
 import be.uantwerpen.enums.ChatNotificationType;
@@ -14,7 +15,7 @@ import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by Dries on 3/11/2015.
@@ -40,7 +41,7 @@ public class ChatManager implements IChatManager {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername(), this);
         ChatSession chs = new ChatSession(chatParticipator);
         IChatSession serverSession = client.getClientSession().sendInvite(friendName, chs);
-        //if serversession is null, then we can store the ChatSession
+        //if serverSession is null, then we can store the ChatSession, which means it's an offline session
         if (serverSession == null) {
             chatParticipator.addChatSession(chs);
             client.addSession(chatParticipator);
@@ -48,7 +49,7 @@ public class ChatManager implements IChatManager {
             return chatParticipator;
         } else {
             chatParticipator.addChatSession(serverSession);
-            serverSession.joinSession(chatParticipator);
+            serverSession.joinSession(chatParticipator, false);
             System.out.println("This is an offline session, server is hosting!");
             return chatParticipator;
         }
@@ -80,7 +81,7 @@ public class ChatManager implements IChatManager {
         ChatParticipator chatParticipator = new ChatParticipator(counter++, client.getUsername(), this);
         chatParticipator.addChatSession(chatSession);
         client.addSession(chatParticipator);
-        chatSession.joinSession(chatParticipator);
+        chatSession.joinSession(chatParticipator, false);
         uiManagerInterface.openChat(chatParticipator);
         return true;
     }
@@ -157,32 +158,38 @@ public class ChatManager implements IChatManager {
     private void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception {
         System.out.println("host left, trying to take over...");
         IChatParticipator server = null;
-        ArrayList<IChatParticipator> otherParticipators = chatParticipator.getOtherParticipators();
+        HashSet<ChatParticipatorKey> otherParticipators = chatParticipator.getOtherParticipators();
         //look for the server
-        for (IChatParticipator participator : otherParticipators) {
+        for (ChatParticipatorKey cpk : otherParticipators) {
             try {
-                if (participator.isServer()) { server = participator; break; }
+                if (cpk.getParticipator().isServer()) { server = cpk.getParticipator(); break; }
             } catch (RemoteException re) {
                 System.out.println("can't reach this client ...");
             }
         }
         if (server == null) throw new RemoteException("Server not found");
         if (!server.hostChat(chatParticipator)) throw new Exception("Host was still reachable from server");
-        for (int i=0;i<otherParticipators.size();i++) {
-            if (otherParticipators.get(i).getUserName().equalsIgnoreCase(chatParticipator.getHostName())) {
-                otherParticipators.remove(i);
-                break;
-            }
-        }
+        //remove chathost
+        ChatParticipatorKey host = chatParticipator.getChatHost();
+        otherParticipators.remove(host);
         System.out.println("recovering cloned session");
-        chatParticipator.getClonedChatSession().hostQuit(chatParticipator);
+        chatParticipator.getClonedChatSession().hostQuit(host.getUserName(), new ChatParticipatorKey(chatParticipator.getUserName(), chatParticipator, true));
         //update other participators that I am new host
-        for (IChatParticipator other : otherParticipators) {
-            other.hostChanged(chatParticipator,chatParticipator.getClonedChatSession());
+        for (ChatParticipatorKey other : otherParticipators) {
+            other.getParticipator().hostChanged(chatParticipator,chatParticipator.getClonedChatSession());
         }
         //try again
         pushRetries = 0;
         pushMessage(chatParticipator, msg);
+    }
+
+    @Override
+    public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
+        IChatSession remoteSession = chatParticipator.getChatSession();
+        if (remoteSession != null) {
+            return remoteSession.leaveSession(chatParticipator.getUserName());
+        }
+        throw new RemoteException("Remote session does not exist");
     }
 
     public void setUiManagerInterface(UIManagerInterface uiManagerInterface) {

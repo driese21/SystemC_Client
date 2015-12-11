@@ -27,7 +27,9 @@ public class HomePage extends JFrame {
     private JList lstConversation;
 
     private JPanel pnlRootPanel;
-    private JComboBox cmbFriends;
+    private DefaultListModel friendsListModel;
+    private JLabel lblFriends;
+    private JList lstFriends;
 
     private String friendName;
 
@@ -37,13 +39,10 @@ public class HomePage extends JFrame {
     public HomePage(UIManagerInterface manager, String name) {
         super("HomePage of " + name);
         this.manager = manager;
-        try {
-            updateFriendList(manager.getFriends());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
         this.conversationListModel = new DefaultListModel();
-        lstConversation.setModel(conversationListModel);
+        this.friendsListModel = new DefaultListModel();
+        this.lstConversation.setModel(conversationListModel);
+        this.lstFriends.setModel(friendsListModel);
         setContentPane(pnlRootPanel);
         pack();
         setLocationRelativeTo(null);
@@ -90,11 +89,14 @@ public class HomePage extends JFrame {
         lstConversation.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                //ChatPage chat = new ChatPage(chatName);
-                try {
-                    manager.openChat((ChatParticipator) lstConversation.getSelectedValue());
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+                if (!e.getValueIsAdjusting()) {
+                    try {
+                        System.out.println("clicked it!");
+                        ChatParticipator chatParticipator = (ChatParticipator) lstConversation.getSelectedValue();
+                        manager.openChat(chatParticipator);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -102,42 +104,38 @@ public class HomePage extends JFrame {
     }
 
     private void addFriendsActionListener() {
-        cmbFriends.addActionListener(getFriendsActionListener());
+        lstFriends.addListSelectionListener(getFriendsActionListener());
     }
 
-    private ActionListener getFriendsActionListener() {
-        return new ActionListener() {
+    private ListSelectionListener getFriendsActionListener() {
+        return new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                JComboBox jComboBox = (JComboBox) e.getSource();
-                try {
-                    manager.sendInvite(jComboBox.getSelectedItem().toString());
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                } catch (UnknownClientException uce) {
-                    uce.printStackTrace();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    try {
+                        manager.sendInvite(lstFriends.getSelectedValue().toString());
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    } catch (UnknownClientException uce) {
+                        uce.printStackTrace();
+                    }
                 }
             }
         };
     }
 
     /**
-     * Updates the ComboBox with friends
+     * Updates the list with friends
      * @param friends the user's friends
      */
     public void updateFriendList(ArrayList<String> friends) {
-        for (int i=0;i<friends.size();i++) {
-            //use insert item at to not trigger the action listener
-            cmbFriends.insertItemAt(friends.get(i),i);
-        }
-        //addFriendsActionListener();
+        friendsListModel.clear();
+        friends.forEach(friendsListModel::addElement);
     }
 
     public void updateChats() {
-        System.out.println("Updating conversation list");
         conversationListModel.clear();
         ArrayList<ChatParticipator> participators = manager.getActiveChatSessions();
-        System.out.println("Amount of sessions I joined: " + participators.size());
         participators.forEach(conversationListModel::addElement);
     }
 

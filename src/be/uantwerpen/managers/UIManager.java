@@ -14,6 +14,7 @@ import be.uantwerpen.interfaces.managers.IAuthenticationManager;
 import be.uantwerpen.interfaces.managers.IChatManager;
 import be.uantwerpen.interfaces.managers.IClientManager;
 import be.uantwerpen.interfaces.managers.UIManagerInterface;
+import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
@@ -54,11 +55,10 @@ public class UIManager implements UIManagerInterface {
     public void openHome(String user) throws RemoteException {
         this.homePage = new HomePage(this, user);
         ArrayList<IChatSession> offlineSessions = getOfflineMessages();
+        updateFriendList(getFriends());
         if (offlineSessions == null) {
-            System.out.println("I don't have any offline messages");
             return;
         }
-        System.out.println("I received offline messages");
         for (IChatSession iChatSession : offlineSessions) {
             openChat(iChatSession);
         }
@@ -71,6 +71,7 @@ public class UIManager implements UIManagerInterface {
      */
     @Override
     public void openChat(ChatParticipator chatParticipator) throws RemoteException {
+        if (chatParticipator == null) return;
         ChatPage chatPage = chatPageHashMap.get(chatParticipator);
         if (chatPage != null) {
             System.out.println("This ChatPage exists, let's set it visible");
@@ -109,7 +110,6 @@ public class UIManager implements UIManagerInterface {
             sb.append(message.getMessage());
             messages.add(sb.toString());
         }
-
         return messages;
     }
 
@@ -175,6 +175,17 @@ public class UIManager implements UIManagerInterface {
     @Override
     public boolean invite(IChatSession chatSession) throws RemoteException {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
+        boolean successfull = chatManager.leaveSession(chatParticipator);
+        if (successfull) {
+            ChatPage toBeClosed = chatPageHashMap.remove(chatParticipator);
+            toBeClosed.setVisible(false);
+            toBeClosed.dispose();
+            return true;
+        } else return false;
     }
 
     @Override

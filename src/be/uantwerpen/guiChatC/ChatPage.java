@@ -93,8 +93,12 @@ public class ChatPage extends JFrame {
         btnLeaveConversation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showConfirmDialog(ChatPage.this, "Functie leaveConversation toevoegen");
-                setVisible(false);
+                try {
+                    uiManagerInterface.leaveSession(chatParticipator);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+                //setVisible(false);
             }
         });
     }

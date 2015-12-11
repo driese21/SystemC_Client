@@ -5,6 +5,7 @@ import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
 import be.uantwerpen.exceptions.UnknownClientException;
+import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
@@ -25,4 +26,6 @@ public interface IChatManager {
     void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator);
 
     void notifyView(ClientStatusType cnt, String friendName);
+
+    boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException;
 }

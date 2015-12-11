@@ -10,8 +10,7 @@ import java.rmi.RemoteException;
 public class StatusUpdater implements Runnable {
     private IClientSession clientSession;
 
-    public StatusUpdater() {
-    }
+    public StatusUpdater() { }
 
     public StatusUpdater(IClientSession clientSession) {
         this.clientSession = clientSession;
