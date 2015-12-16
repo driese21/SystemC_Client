@@ -11,26 +11,6 @@ import java.rmi.RemoteException;
  */
 public class ClientChat {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
-
         MainManager mainManager = new MainManager();
-
-        //UIManagerInterface manager = new UIManager();1
-        //Login login = new Login();
-        /*try {
-            try {
-                System.out.println(args[0] + "  " + args[1]);
-                ConsoleManager cm = new ConsoleManager(args[0],args[1]);
-            } catch (ClientNotOnlineException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } catch (AlreadyBoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidCredentialsException e) {
-            e.printStackTrace();
-        }*/
     }
 }
