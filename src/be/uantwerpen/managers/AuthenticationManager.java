@@ -12,8 +12,10 @@ import java.rmi.RemoteException;
 
 /**
  * Created by Dries on 3/11/2015.
+ * Handels the authentication between client and server
  */
 public class AuthenticationManager implements IAuthenticationManager {
+
     private Client client;
     private IClientManager clientManager;
     private IServerListener serverListener;
@@ -26,6 +28,13 @@ public class AuthenticationManager implements IAuthenticationManager {
         this.client = client;
     }
 
+    /**
+     * Registrers the new user
+     * @param username
+     * @param password
+     * @param fullName
+     * @return
+     */
     @Override
     public boolean register(String username, String password, String fullName) {
         try {
@@ -50,6 +59,13 @@ public class AuthenticationManager implements IAuthenticationManager {
         return true;
     }
 
+    /**
+     * Logs a user in
+     * @param username
+     * @param password
+     * @return
+     * @throws InvalidCredentialsException
+     */
     @Override
     public boolean login(String username, String password) throws InvalidCredentialsException {
         try {

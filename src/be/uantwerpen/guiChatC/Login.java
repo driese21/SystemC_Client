@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 
 /**
  * Created by Michiel on 30/10/2015.
+ * Page you use to log in
  */
 public class Login extends JFrame {
     private UIManagerInterface manager;
@@ -40,6 +41,9 @@ public class Login extends JFrame {
                 btnLogin.doClick();
             }
         });
+        /**
+         * Log onto the server
+         */
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,6 +71,9 @@ public class Login extends JFrame {
             }
         });
 
+        /**
+         * Go to the register page
+         */
         btnRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

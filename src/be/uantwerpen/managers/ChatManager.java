@@ -19,6 +19,7 @@ import java.util.HashSet;
 
 /**
  * Created by Dries on 3/11/2015.
+ * Class that is responsible for everything envolving chats
  */
 public class ChatManager implements IChatManager {
     private int pushRetries = 0;
@@ -153,6 +154,7 @@ public class ChatManager implements IChatManager {
      * It calls the server participator and verifies whether it's allowed to take over a session
      * After which it will notify other participators if it has taken over the session.
      * @param chatParticipator On which chatparticipator it should try to re-host the session
+     *
      * @throws Exception
      */
     private void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception {
@@ -183,6 +185,12 @@ public class ChatManager implements IChatManager {
         pushMessage(chatParticipator, msg);
     }
 
+    /**
+     *
+     * @param chatParticipator
+     * @return
+     * @throws RemoteException
+     */
     @Override
     public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
         IChatSession remoteSession = chatParticipator.getChatSession();

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Djamo on 30/10/2015.
+ * Default page when you log in
  */
 public class HomePage extends JFrame {
     private UIManagerInterface manager;
@@ -52,6 +53,9 @@ public class HomePage extends JFrame {
     }
 
     public void addListeners(){
+        /**
+         *  Adds a friend to friendlist
+         */
         btnAddFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,6 +69,9 @@ public class HomePage extends JFrame {
             }
         });
 
+        /**
+         * Deletes a friend from friendlist
+         */
         btnDeleteFriend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,6 +84,10 @@ public class HomePage extends JFrame {
             }
         });
 
+
+        /**
+         * Log off the system
+         */
         btnLogOff.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,6 +144,9 @@ public class HomePage extends JFrame {
         friends.forEach(friendsListModel::addElement);
     }
 
+    /**
+     * Updates the chats of the participators
+     */
     public void updateChats() {
         conversationListModel.clear();
         ArrayList<ChatParticipator> participators = manager.getActiveChatSessions();

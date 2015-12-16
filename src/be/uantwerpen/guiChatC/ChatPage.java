@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Djamo on 30/10/2015.
+ * Page you see when you are chatting with someone
  */
 public class ChatPage extends JFrame {
     private UIManagerInterface uiManagerInterface;
@@ -81,7 +82,7 @@ public class ChatPage extends JFrame {
         });
 
         /**
-         * invites a friend into a conversation
+         * Invite a friend into a conversation
          */
         btnInvite.addActionListener(new ActionListener() {
             @Override
@@ -96,6 +97,9 @@ public class ChatPage extends JFrame {
             }
         });
 
+        /**
+         *  Leaves a conversation but remain online
+         */
         btnLeaveConversation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

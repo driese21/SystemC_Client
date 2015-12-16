@@ -11,6 +11,7 @@ import java.util.Random;
 
 /**
  * Created by Michiel on 30/10/2015.
+ * Page you use to register a new user
  */
 public class Register extends JFrame {
     private UIManagerInterface manager;
@@ -42,6 +43,9 @@ public class Register extends JFrame {
 
     private void addListeners() {
 
+        /**
+         * For testing purposes to create new user fast
+         */
         btnRandomUser.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
