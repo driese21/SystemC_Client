@@ -105,6 +105,10 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
         this.chatName = chatName;
     }
 
+    /**
+     * Sets the name of a chat with the names of the participators
+     * @throws RemoteException
+     */
     @Override
     public void chooseChatName() throws RemoteException {
         StringBuilder sb = new StringBuilder();
