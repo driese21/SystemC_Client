@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by Dries on 23/10/2015.
@@ -54,49 +55,50 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
 
     /**
      * Gets invoked by the ChatSession if a new message has been sent
-     * @param cnt Which type of notification
      * @param msg A reference to the Message
      * @throws RemoteException
      */
     @Override
-    public synchronized void notifyListener(ChatNotificationType cnt, IMessage msg) throws RemoteException {
-        if (cnt == ChatNotificationType.NEWMESSAGE && msg != null) {
-            chatManager.notifyView(cnt, msg, this);
+    public synchronized void notifyListener(IMessage msg) throws RemoteException {
+        if (msg != null) {
+            chatManager.notifyView(ChatNotificationType.NEWMESSAGE, msg, this);
         }
     }
 
     /**
      * Gets invoked by the ChatSession if a user has joined
-     * @param cnt Type of notification
-     * @param cpk The specific participator
+     * @param chatParticipator The specific participator
+     * @param host defines if this participator is the host
      * @throws RemoteException
      */
     @Override
-    public synchronized void notifyListener(ChatNotificationType cnt, ChatParticipatorKey cpk) throws RemoteException {
-        if (cpk.getParticipator() != null) {
-            if (cnt == ChatNotificationType.USERJOINED) {
-                if (!participatorsExists(cpk.getParticipator().getUserName())) {
-                    otherParticipators.add(cpk);
-                }
-            } else if (cnt == ChatNotificationType.USERLEFT) {
-                if (participatorsExists(cpk.getUserName())) otherParticipators.remove(cpk);
-                else System.out.println("doesn't exists, can't remove...");
+    public synchronized void notifyListener(IChatParticipator chatParticipator, boolean host) throws RemoteException {
+        if (chatParticipator != null) {
+            ChatParticipatorKey cpk = new ChatParticipatorKey(chatParticipator.getUserName(), chatParticipator, host);
+            if (!participatorsExists(cpk.getUserName())) {
+                otherParticipators.add(cpk);
             }
         } else System.out.println("new participator is null?");
     }
 
     /**
      * Gets invoked by the ChatSession if a user has left the session
-     * @param cnt Type of notification
      * @param userName Username of user who has left
      * @throws RemoteException
      */
-    /*@Override
-    public void notifyListener(ChatNotificationType cnt, String userName) throws RemoteException {
-        if (cnt == ChatNotificationType.USERJOINED) {
-            if (!participatorsExists(userName))
+    @Override
+    public void notifyListener(String userName) throws RemoteException {
+        if (participatorsExists(userName)) {
+            Iterator it = otherParticipators.iterator();
+            while (it.hasNext()) {
+                ChatParticipatorKey cpk = (ChatParticipatorKey) it.next();
+                if (cpk.getUserName().equalsIgnoreCase(userName)) {
+                    it.remove();
+                    break;
+                }
+            }
         }
-    }*/
+    }
 
     /**
      * Checks if a participators exists in the participator list

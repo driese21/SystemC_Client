@@ -226,6 +226,9 @@ public class UIManager implements UIManagerInterface {
         }
     }
 
+    @Override
+    public void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception { }
+
     //endregion
 
     //region ClientManager

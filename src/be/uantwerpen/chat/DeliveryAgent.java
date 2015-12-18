@@ -29,7 +29,9 @@ public class DeliveryAgent extends Thread {
 
     private void deliver() {
         HashSet<ChatParticipatorKey> failedDelivery = new HashSet<>(participators.size());
-        participators.forEach(chatParticipatorKey -> { if (!deliver(chatParticipatorKey.getParticipator())) failedDelivery.add(chatParticipatorKey);});
+        participators.forEach(chatParticipatorKey -> {
+            if (!deliver(chatParticipatorKey.getParticipator())) failedDelivery.add(chatParticipatorKey);
+        });
         if (failedDelivery.size()==0) return;
         failedDelivery.forEach(chatParticipatorKey -> {
             int retries = 0;
@@ -47,10 +49,16 @@ public class DeliveryAgent extends Thread {
 
     private boolean deliver(IChatParticipator participator) {
         try {
-            if (message != null) participator.notifyListener(chatNotificationType, message);
-            else if (cpk != null) participator.notifyListener(chatNotificationType, cpk);
+            if (message != null) {
+                participator.notifyListener(message);
+            }
+            else if (cpk != null) {
+                if (chatNotificationType == ChatNotificationType.USERJOINED) participator.notifyListener(cpk.getParticipator(), cpk.isHost());
+                else if (chatNotificationType == ChatNotificationType.USERLEFT) participator.notifyListener(cpk.getUserName());
+            }
             else System.out.println("Both message and participator are null");
         } catch (RemoteException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
