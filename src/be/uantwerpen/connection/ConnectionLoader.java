@@ -13,8 +13,7 @@ import java.rmi.RemoteException;
  * Created by Dries on 10/11/2015.
  */
 public class ConnectionLoader {
-    public static IServerListener getServer(InetAddress serverIp) throws RemoteException, NotBoundException, MalformedURLException, ServerNotFoundException {
-        if (serverIp == null) throw new ServerNotFoundException("Server not found...");
+    public static IServerListener getServer(InetAddress serverIp) throws RemoteException, NotBoundException, MalformedURLException {
         return (IServerListener) Naming.lookup("//" + serverIp.getHostAddress() + ":11337" + "/ChatServer");
     }
 }
