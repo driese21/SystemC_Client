@@ -2,6 +2,7 @@ package be.uantwerpen.managers;
 
 import be.uantwerpen.client.Client;
 import be.uantwerpen.connection.ConnectionLoader;
+import be.uantwerpen.exceptions.ServerNotFoundException;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
@@ -16,15 +17,21 @@ public class MainManager {
     private ClientManager clientManager;
     private ChatManager chatManager;
     private AuthenticationManager authenticationManager;
+    private DiscoveryManager discoveryManager;
 
     public MainManager() throws RemoteException, MalformedURLException, NotBoundException {
+        this.discoveryManager = new DiscoveryManager();
         this.client = new Client();
         this.chatManager = new ChatManager(client);
         this.clientManager = new ClientManager(chatManager, client);
-        this.authenticationManager = new AuthenticationManager(ConnectionLoader.getServer(), client, clientManager);
+        try {
+            this.authenticationManager = new AuthenticationManager(ConnectionLoader.getServer(discoveryManager.getServerIp()), client, clientManager);
+        } catch (ServerNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
         this.uiManager = new UIManager(chatManager, clientManager, authenticationManager);
-        //todo dit moet echt wel anders
-        chatManager.setUiManagerInterface(this.uiManager);
-        clientManager.setUiManagerInterface(this.uiManager);
+        this.chatManager.setUiManagerInterface(this.uiManager);
+        this.clientManager.setUiManagerInterface(this.uiManager);
     }
 }
