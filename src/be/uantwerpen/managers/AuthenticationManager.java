@@ -1,7 +1,6 @@
 package be.uantwerpen.managers;
 
 import be.uantwerpen.client.Client;
-import be.uantwerpen.client.StatusUpdater;
 import be.uantwerpen.exceptions.InvalidCredentialsException;
 import be.uantwerpen.interfaces.managers.IAuthenticationManager;
 import be.uantwerpen.interfaces.managers.IClientManager;
@@ -39,7 +38,7 @@ public class AuthenticationManager implements IAuthenticationManager {
             client.setUsername(username);
             client.setClientSession(ics);
             //client = new Client(username,fullName,ics);
-            finalizeAuthentication(ics);
+            finalizeAuthentication();
         } catch (RemoteException e) {
             e.printStackTrace();
             return false;
@@ -63,7 +62,7 @@ public class AuthenticationManager implements IAuthenticationManager {
             client.setUsername(username);
             client.setFullName(ics.getFullName());
             client.setClientSession(ics);
-            finalizeAuthentication(ics);
+            finalizeAuthentication();
         } catch (RemoteException e) {
             e.printStackTrace();
             return false;
@@ -71,8 +70,7 @@ public class AuthenticationManager implements IAuthenticationManager {
         return true;
     }
 
-    private void finalizeAuthentication(IClientSession ics) throws RemoteException {
+    private void finalizeAuthentication() throws RemoteException {
         clientManager.openPassive();
-        new Thread(new StatusUpdater(ics)).start();
     }
 }
