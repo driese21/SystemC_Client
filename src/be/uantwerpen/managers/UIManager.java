@@ -62,6 +62,7 @@ public class UIManager implements UIManagerInterface {
         for (IChatSession iChatSession : offlineSessions) {
             openChat(iChatSession);
         }
+        clientManager.offlineMessagesRead();
     }
 
     /**
