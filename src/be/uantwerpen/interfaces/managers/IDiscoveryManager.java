@@ -13,5 +13,5 @@ import java.rmi.RemoteException;
 public interface IDiscoveryManager {
     void discoveryReply(DatagramPacket reply) throws InterruptedException, RemoteException, NotBoundException, MalformedURLException;
     InetAddress getServerIp();
-    void interrupt() throws NotBoundException, MalformedURLException, RemoteException;
+    void interruptManager() throws NotBoundException, MalformedURLException, RemoteException;
 }

@@ -21,6 +21,7 @@ public class MainManager implements be.uantwerpen.interfaces.managers.IMainManag
 
     public MainManager() throws NotBoundException {
         this.discoveryManager = new DiscoveryManager(this);
+        new Thread(discoveryManager).start();
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
 /**
  * Created by Dries on 19/12/2015.
  */
-public class DiscoveryManager implements IDiscoveryManager {
+public class DiscoveryManager extends Thread implements IDiscoveryManager {
     private final int MAXRETRIES = 5;
     private final IMainManager mainManager;
     private DiscoveryAgent discoveryAgent;
@@ -24,12 +24,11 @@ public class DiscoveryManager implements IDiscoveryManager {
     private int retries;
     private boolean waiting;
 
-    public DiscoveryManager(IMainManager mainManager) throws NotBoundException {
+    public DiscoveryManager(IMainManager mainManager) {
         this.mainManager = mainManager;
         this.discoveryAgent = new DiscoveryAgent("224.0.0.230", 11335);
         this.discoveryWatchdog = new DiscoveryWatchdog(this, 5000);
         this.retries = 0;
-        startDiscovery();
     }
 
     private void startDiscovery() throws NotBoundException {
@@ -69,7 +68,7 @@ public class DiscoveryManager implements IDiscoveryManager {
     }
 
     @Override
-    public void interrupt() throws NotBoundException, MalformedURLException, RemoteException {
+    public void interruptManager() throws NotBoundException, MalformedURLException, RemoteException {
         if (waiting) {
             System.out.println("Watchdog interrupted...");
             this.discoveryAgent.setClosedByInterrupt(true);
@@ -83,5 +82,15 @@ public class DiscoveryManager implements IDiscoveryManager {
             retries++;
             startDiscovery();
         } else mainManager.chatServerFound(false);
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        try {
+            startDiscovery();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 }

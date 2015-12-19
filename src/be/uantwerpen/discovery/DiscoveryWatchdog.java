@@ -20,7 +20,7 @@ public class DiscoveryWatchdog extends Thread {
 
     private void waitAndInterruptManager() throws InterruptedException, RemoteException, NotBoundException, MalformedURLException {
         Thread.sleep(sleepTime);
-        discoveryManager.interrupt();
+        discoveryManager.interruptManager();
     }
 
     @Override
