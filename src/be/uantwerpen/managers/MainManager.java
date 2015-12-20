@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 
 /**
  * Created by Dries on 10/11/2015.
+ * Manager Manager
+ * Manages and starts all other managers
  */
 public class MainManager implements be.uantwerpen.interfaces.managers.IMainManager {
     private Client client;

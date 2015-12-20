@@ -21,6 +21,7 @@ import java.util.HashSet;
 
 /**
  * Created by Dries on 3/11/2015.
+ * Class that is responsible for everything envolving chats
  */
 public class ChatManager implements IChatManager {
     private int pushRetries = 0;
@@ -34,7 +35,7 @@ public class ChatManager implements IChatManager {
 
     /**
      * Invites another user
-     * @param friendName username of the other person
+     * @param friendName username of the other person you want to invite
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
@@ -171,6 +172,7 @@ public class ChatManager implements IChatManager {
      * It calls the server participator and verifies whether it's allowed to take over a session
      * After which it will notify other participators if it has taken over the session.
      * @param chatParticipator On which chatparticipator it should try to re-host the session
+     *
      * @throws Exception
      */
     @Override
@@ -202,6 +204,12 @@ public class ChatManager implements IChatManager {
         pushMessage(chatParticipator, msg);
     }
 
+    /**
+     * Leaves a chatssesion
+     * @param chatParticipator chatParticipator who is hosting the chatSession
+     * @return Username of the person that wants to leave the session
+     * @throws RemoteException
+     */
     @Override
     public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
         IChatSession remoteSession = chatParticipator.getChatSession();

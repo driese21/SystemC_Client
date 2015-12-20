@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * Created by Dries on 3/11/2015.
+ * Manages the functions of a client
  */
 public class ClientManager implements IClientManager {
     private Client client;

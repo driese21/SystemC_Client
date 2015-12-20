@@ -27,6 +27,7 @@ import java.util.HashMap;
 /**
  * Creator: Seb
  * Date: 8/11/2015
+ * Manages the UI of all the pages
  */
 public class UIManager implements UIManagerInterface {
     private HashMap<ChatParticipator, ChatPage> chatPageHashMap;
@@ -102,6 +103,7 @@ public class UIManager implements UIManagerInterface {
         ChatPage offlineChat = new ChatPage(offlineSession.getChatName(), this, offlineSession);
     }
 
+
     @Override
     public ArrayList<String> getMessages(IChatSession ics) throws RemoteException {
         ArrayList<String> messages = new ArrayList<>();
@@ -125,6 +127,10 @@ public class UIManager implements UIManagerInterface {
         return new ArrayList<>(chatPageHashMap.keySet());
     }
 
+    /**
+     * Updates the friendlist on the homePage
+     * @param friends name of the friends
+     */
     @Override
     public void updateFriendList(ArrayList<String> friends) {
         homePage.updateFriendList(friends);

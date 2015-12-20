@@ -46,6 +46,11 @@ public class ClientListener extends UnicastRemoteObject implements IClientListen
         return true;
     }
 
+
+    /**
+     * Updates the friendlist if you add or delete a friend
+     * @throws RemoteException
+     */
     @Override
     public void friendListUpdated() throws RemoteException {
         clientManager.friendListUpdated();

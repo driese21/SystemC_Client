@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Djamo on 30/10/2015.
+ * Page you see when you are chatting with someone
  */
 public class ChatPage extends JFrame {
     private UIManagerInterface uiManagerInterface;
@@ -64,6 +65,9 @@ public class ChatPage extends JFrame {
 
     public void addListeners() {
         //Listener voor bericht te versturen
+        /**
+         * contains the message to send and clears the textbox after sending a message
+         */
         txtMessage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,6 +80,9 @@ public class ChatPage extends JFrame {
             }
         });
 
+        /**
+         * Invite a friend into a conversation
+         */
         btnInvite.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,6 +96,9 @@ public class ChatPage extends JFrame {
             }
         });
 
+        /**
+         *  Leaves a conversation but remain online
+         */
         btnLeaveConversation.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -102,6 +112,10 @@ public class ChatPage extends JFrame {
         });
     }
 
+    /**
+     * When a message is received it will put it into the txtconversation field
+     * @param message the message it received
+     */
     public void receiveMessage(IMessage message) {
         try {
             txtConversation.append(message.getUsername() + ": " + message.getMessage());
