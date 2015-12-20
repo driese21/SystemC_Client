@@ -31,10 +31,8 @@ public class AuthenticationManager implements IAuthenticationManager {
             IClientSession ics = serverListener.register(username,password,fullName);
 
             if (ics == null) {
-                System.out.println("hier klopt iets niet");
                 return false;
             }
-            client.setFullName(fullName);
             client.setUsername(username);
             client.setClientSession(ics);
             //client = new Client(username,fullName,ics);
@@ -52,15 +50,9 @@ public class AuthenticationManager implements IAuthenticationManager {
     @Override
     public boolean login(String username, String password) throws InvalidCredentialsException {
         try {
-            System.out.println(username);
             IClientSession ics = serverListener.login(username, password);
-            if (ics == null) {
-                System.out.println("hier klopt ook iets niet");
-                return false;
-            }
-            //client = new Client(username,ics.getFullName(),ics);
+            if (ics == null) return false;
             client.setUsername(username);
-            client.setFullName(ics.getFullName());
             client.setClientSession(ics);
             finalizeAuthentication();
         } catch (RemoteException e) {

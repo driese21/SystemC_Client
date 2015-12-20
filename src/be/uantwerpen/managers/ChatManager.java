@@ -4,6 +4,7 @@ import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.chat.ChatParticipatorKey;
 import be.uantwerpen.chat.ChatSession;
 import be.uantwerpen.client.Client;
+import be.uantwerpen.client.ClientKey;
 import be.uantwerpen.enums.ChatNotificationType;
 import be.uantwerpen.enums.ClientStatusType;
 import be.uantwerpen.exceptions.ClientNotOnlineException;
@@ -12,6 +13,7 @@ import be.uantwerpen.interfaces.managers.IChatManager;
 import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
+import be.uantwerpen.rmiInterfaces.IClientListener;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
 import java.rmi.RemoteException;
@@ -40,18 +42,28 @@ public class ChatManager implements IChatManager {
     public ChatParticipator sendInvite(String friendName) throws RemoteException, UnknownClientException {
         ChatParticipator chatParticipator = new ChatParticipator(counter++,client.getUsername(), this);
         ChatSession chs = new ChatSession(chatParticipator);
-        IChatSession serverSession = client.getClientSession().sendInvite(friendName, chs);
-        //if serverSession is null, then we can store the ChatSession, which means it's an offline session
-        if (serverSession == null) {
+        //try to get friend's session
+        IClientListener friendListener = client.getFriendListener(new ClientKey(friendName));
+        if (friendListener != null) {
+            chs.chooseChatName();
             chatParticipator.addChatSession(chs);
             client.addSession(chatParticipator);
-            System.out.println("This is an online session, I'm hosting!");
+            friendListener.initialHandshake(chs);
             return chatParticipator;
         } else {
-            chatParticipator.addChatSession(serverSession);
-            serverSession.joinSession(chatParticipator, false);
-            System.out.println("This is an offline session, server is hosting!");
-            return chatParticipator;
+            IChatSession serverSession = client.getClientSession().sendInvite(friendName, chs);
+            //if serverSession is null, then we can store the ChatSession, which means it's an offline session
+            if (serverSession == null) {
+                chatParticipator.addChatSession(chs);
+                client.addSession(chatParticipator);
+                System.out.println("This is an online session, I'm hosting!");
+                return chatParticipator;
+            } else {
+                chatParticipator.addChatSession(serverSession);
+                serverSession.joinSession(chatParticipator, false);
+                System.out.println("This is an offline session, server is hosting!");
+                return chatParticipator;
+            }
         }
     }
 
@@ -64,9 +76,14 @@ public class ChatManager implements IChatManager {
      */
     @Override
     public boolean inviteToSession(ChatParticipator cp, String friendName) throws RemoteException, UnknownClientException {
-        IChatSession chatSession = client.getClientSession().sendInvite(friendName, cp.getChatSession());
-        if (chatSession == null) return true;
-        else throw new RemoteException("This appears to be an offline ChatSession, can't invite other users");
+        IClientListener friendListener = client.getFriendListener(new ClientKey(friendName));
+        if (friendListener != null && friendListener.alive()) {
+            return friendListener.initialHandshake(cp.getChatSession());
+        } else {
+            IChatSession chatSession = client.getClientSession().sendInvite(friendName, cp.getChatSession());
+            if (chatSession == null) return true;
+            else throw new RemoteException("This appears to be an offline ChatSession, can't invite other users");
+        }
     }
 
     /**
@@ -82,6 +99,7 @@ public class ChatManager implements IChatManager {
         chatParticipator.addChatSession(chatSession);
         client.addSession(chatParticipator);
         chatSession.joinSession(chatParticipator, false);
+        chatSession.chooseChatName();
         uiManagerInterface.openChat(chatParticipator);
         return true;
     }

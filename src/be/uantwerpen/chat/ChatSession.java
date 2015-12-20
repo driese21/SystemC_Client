@@ -133,6 +133,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     @Override
     public String getChatName() throws RemoteException {
+        chooseChatName();
         return chatName;
     }
 

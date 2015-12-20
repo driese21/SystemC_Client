@@ -1,7 +1,5 @@
 package be.uantwerpen.rmiInterfaces;
 
-import be.uantwerpen.enums.ClientStatusType;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -12,4 +10,6 @@ public interface IClientListener extends Remote {
     boolean initialHandshake(IChatSession otherChatSession) throws RemoteException;
     boolean alive() throws RemoteException;
     void friendListUpdated() throws RemoteException;
+    //void friendOnline(String friendName, IClientListener friendListener) throws RemoteException;
+    void friendOnline(String friendName, IClientListener friendListener, boolean ack) throws RemoteException;
 }

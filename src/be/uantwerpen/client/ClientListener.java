@@ -7,6 +7,7 @@ import be.uantwerpen.rmiInterfaces.IChatSession;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 /**
  * Created by Dries on 16/10/2015.
@@ -31,6 +32,7 @@ public class ClientListener extends UnicastRemoteObject implements IClientListen
      */
     @Override
     public boolean initialHandshake(IChatSession otherChatSession) throws RemoteException {
+        System.out.println("I received an invite...");
         return chatManager.invite(otherChatSession);
     }
 
@@ -47,5 +49,10 @@ public class ClientListener extends UnicastRemoteObject implements IClientListen
     @Override
     public void friendListUpdated() throws RemoteException {
         clientManager.friendListUpdated();
+    }
+
+    @Override
+    public void friendOnline(String friendName, IClientListener friendListener, boolean ack) throws RemoteException {
+        clientManager.friendOnline(friendName, friendListener, ack);
     }
 }

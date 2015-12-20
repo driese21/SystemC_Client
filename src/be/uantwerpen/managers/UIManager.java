@@ -16,6 +16,7 @@ import be.uantwerpen.interfaces.managers.IClientManager;
 import be.uantwerpen.interfaces.managers.UIManagerInterface;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 import be.uantwerpen.rmiInterfaces.IChatSession;
+import be.uantwerpen.rmiInterfaces.IClientListener;
 import be.uantwerpen.rmiInterfaces.IMessage;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -44,14 +45,18 @@ public class UIManager implements UIManagerInterface {
         openLogin();
     }
 
+    //region UIManager
+    @Override
     public void openLogin(){
         Login login = new Login(this);
     }
 
+    @Override
     public void openRegister(){
         Register registerForm = new Register(this);
     }
 
+    @Override
     public void openHome(String user) throws RemoteException {
         this.homePage = new HomePage(this, user);
         ArrayList<IChatSession> offlineSessions = getOfflineMessages();
@@ -80,6 +85,7 @@ public class UIManager implements UIManagerInterface {
             chatPage.toFront();
         } else {
             System.out.println("This ChatPage does not exist yet, creating new one");
+            System.out.println("Chatparticipator is " + chatParticipator == null);
             chatPage = new ChatPage(chatParticipator.getChatName(), this, chatParticipator);
             chatPageHashMap.put(chatParticipator, chatPage);
         }
@@ -123,6 +129,8 @@ public class UIManager implements UIManagerInterface {
     public void updateFriendList(ArrayList<String> friends) {
         homePage.updateFriendList(friends);
     }
+
+    //endregion
 
     //region AuthenticationManager
     @Override
@@ -178,13 +186,18 @@ public class UIManager implements UIManagerInterface {
 
     @Override
     public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
-        boolean successful = chatManager.leaveSession(chatParticipator);
+        ChatPage toBeClosed = chatPageHashMap.remove(chatParticipator);
+        toBeClosed.setVisible(false);
+        toBeClosed.dispose();
+        return true;
+        //todo graceful leaving
+        /*//boolean successful = chatManager.leaveSession(chatParticipator);
         if (successful) {
             ChatPage toBeClosed = chatPageHashMap.remove(chatParticipator);
             toBeClosed.setVisible(false);
             toBeClosed.dispose();
             return true;
-        } else return false;
+        } else return false;*/
     }
 
     @Override
@@ -195,7 +208,10 @@ public class UIManager implements UIManagerInterface {
     @Override
     public void notifyView(ChatNotificationType cnt, IMessage msg, ChatParticipator participator) {
         if (cnt == ChatNotificationType.NEWMESSAGE) {
-            chatPageHashMap.get(participator).receiveMessage(msg);
+            ChatPage chatPage = chatPageHashMap.get(participator);
+            if (chatPage != null) {
+                chatPage.receiveMessage(msg);
+            }
         }
     }
 
@@ -264,6 +280,11 @@ public class UIManager implements UIManagerInterface {
     @Override
     public void offlineMessagesRead() throws RemoteException {
         clientManager.offlineMessagesRead();
+    }
+
+    @Override
+    public void friendOnline(String friendName, IClientListener friendListener, boolean ack) throws RemoteException {
+        return;
     }
 
     //endregion

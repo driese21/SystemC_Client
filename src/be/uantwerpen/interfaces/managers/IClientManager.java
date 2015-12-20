@@ -2,6 +2,7 @@ package be.uantwerpen.interfaces.managers;
 
 import be.uantwerpen.exceptions.UnknownClientException;
 import be.uantwerpen.rmiInterfaces.IChatSession;
+import be.uantwerpen.rmiInterfaces.IClientListener;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -23,4 +24,6 @@ public interface IClientManager {
     ArrayList<IChatSession> getOfflineMessages() throws RemoteException;
 
     void offlineMessagesRead() throws RemoteException;
+
+    void friendOnline(String friendName, IClientListener friendListener, boolean ack) throws RemoteException;
 }
