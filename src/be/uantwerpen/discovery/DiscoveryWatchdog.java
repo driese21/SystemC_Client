@@ -7,6 +7,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 /**
+ * Creates interrupts every 10 seconds
  * Created by Dries on 19/12/2015.
  */
 public class DiscoveryWatchdog extends Thread {
@@ -17,6 +18,7 @@ public class DiscoveryWatchdog extends Thread {
         this.discoveryManager = discoveryManager;
         this.sleepTime = sleepTime;
     }
+
 
     private void waitAndInterruptManager() throws InterruptedException, RemoteException, NotBoundException, MalformedURLException {
         Thread.sleep(sleepTime);

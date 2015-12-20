@@ -13,6 +13,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 /**
+ * This class initiates the discovery of the server
  * Created by Dries on 19/12/2015.
  */
 public class DiscoveryManager extends Thread implements IDiscoveryManager {
@@ -31,6 +32,10 @@ public class DiscoveryManager extends Thread implements IDiscoveryManager {
         this.retries = 0;
     }
 
+    /**
+     * Tells the discoveryAgent to start searching
+     * @throws NotBoundException
+     */
     private void startDiscovery() throws NotBoundException {
         try {
             this.discoveryAgent.openSocket();
@@ -46,6 +51,14 @@ public class DiscoveryManager extends Thread implements IDiscoveryManager {
         }
     }
 
+    /**
+     * Retrives the information from the reply from the server
+     * @param reply answer from the server
+     * @throws InterruptedException
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws MalformedURLException
+     */
     @Override
     public void discoveryReply(DatagramPacket reply) throws InterruptedException, RemoteException, NotBoundException, MalformedURLException {
         if (reply != null) {
@@ -67,6 +80,12 @@ public class DiscoveryManager extends Thread implements IDiscoveryManager {
         return serverIp;
     }
 
+    /**
+     * Interrupts the proces of looking for the server and retries to discover it
+     * @throws NotBoundException
+     * @throws MalformedURLException
+     * @throws RemoteException
+     */
     @Override
     public void interruptManager() throws NotBoundException, MalformedURLException, RemoteException {
         if (waiting) {
@@ -77,6 +96,12 @@ public class DiscoveryManager extends Thread implements IDiscoveryManager {
         }
     }
 
+    /**
+     * If the server was not found it will start discovering again.
+     * @throws NotBoundException
+     * @throws MalformedURLException
+     * @throws RemoteException
+     */
     private void retryDiscovery() throws NotBoundException, MalformedURLException, RemoteException {
         if (retries < MAXRETRIES) {
             retries++;
