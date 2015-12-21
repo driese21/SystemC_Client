@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
+ * A chat participator is a client who has joined a chat session
  * Created by Dries on 23/10/2015.
+ *
  */
 public class ChatParticipator extends UnicastRemoteObject implements IChatParticipator {
     private int id;
@@ -42,6 +44,7 @@ public class ChatParticipator extends UnicastRemoteObject implements IChatPartic
 
     /**
      * This functions gets invoked on the invited client
+     * Invites a user to a chatSession
      * @param chatSession
      * @throws RemoteException
      */

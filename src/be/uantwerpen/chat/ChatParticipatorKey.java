@@ -3,6 +3,7 @@ package be.uantwerpen.chat;
 import be.uantwerpen.rmiInterfaces.IChatParticipator;
 
 /**
+ *
  * Created by Dries on 8/12/2015.
  */
 public class ChatParticipatorKey {

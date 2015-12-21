@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 /**
+ * Contains all the information of a chat
  * Created by Dries on 16/10/2015.
  */
 public class ChatSession extends UnicastRemoteObject implements IChatSession {

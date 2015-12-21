@@ -9,6 +9,7 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 
 /**
+ * This class discovers the server
  * Created by Dries on 19/12/2015.
  */
 public class DiscoveryAgent {
@@ -27,6 +28,13 @@ public class DiscoveryAgent {
         this.setClosedByInterrupt(false);
     }
 
+    /**
+     * Tries to locate the server
+     * @param msg       containts "CLIENT" as information
+     * @param dstPort   port the server is on
+     * @return
+     * @throws IOException
+     */
     public DatagramPacket discover(String msg, int dstPort) throws IOException {
         try {
             byte[] bytesOut = msg.getBytes();

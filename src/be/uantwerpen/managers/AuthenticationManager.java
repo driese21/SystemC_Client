@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 
 /**
  * Created by Dries on 3/11/2015.
- * Handels the authentication between client and server
+ * Manages the authentication between client and server
  */
 public class AuthenticationManager implements IAuthenticationManager {
 
