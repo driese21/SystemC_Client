@@ -33,7 +33,7 @@ public class ChatManager implements IChatManager {
 
     /**
      * Invites another user
-     * @param friendName username of the other person
+     * @param friendName username of the other person you want to invite
      * @throws RemoteException
      * @throws ClientNotOnlineException
      */
@@ -187,9 +187,9 @@ public class ChatManager implements IChatManager {
     }
 
     /**
-     *
-     * @param chatParticipator
-     * @return
+     * Leaves a chatssesion
+     * @param chatParticipator chatParticipator who is hosting the chatSession
+     * @return Username of the person that wants to leave the session
      * @throws RemoteException
      */
     @Override
