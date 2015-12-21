@@ -157,7 +157,8 @@ public class ChatManager implements IChatManager {
      *
      * @throws Exception
      */
-    private void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception {
+    @Override
+    public void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception {
         System.out.println("host left, trying to take over...");
         IChatParticipator server = null;
         HashSet<ChatParticipatorKey> otherParticipators = chatParticipator.getOtherParticipators();

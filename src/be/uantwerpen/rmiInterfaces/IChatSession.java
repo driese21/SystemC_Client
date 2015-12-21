@@ -1,5 +1,6 @@
 package be.uantwerpen.rmiInterfaces;
 
+import be.uantwerpen.chat.ChatParticipator;
 import be.uantwerpen.chat.ChatParticipatorKey;
 import be.uantwerpen.chat.Message;
 import be.uantwerpen.enums.ChatNotificationType;

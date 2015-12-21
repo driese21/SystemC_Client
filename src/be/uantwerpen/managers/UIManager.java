@@ -63,6 +63,7 @@ public class UIManager implements UIManagerInterface {
         for (IChatSession iChatSession : offlineSessions) {
             openChat(iChatSession);
         }
+        clientManager.offlineMessagesRead();
     }
 
     /**
@@ -159,9 +160,7 @@ public class UIManager implements UIManagerInterface {
     @Override
     public ChatParticipator sendInvite(String friendName) throws RemoteException, UnknownClientException {
         ChatParticipator cp = chatManager.sendInvite(friendName);
-        if (cp != null)
-            openChat(cp);
-        else System.out.println("tis naar de kloten");
+        if (cp != null) openChat(cp);
         return cp;
     }
 
@@ -185,8 +184,8 @@ public class UIManager implements UIManagerInterface {
 
     @Override
     public boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException {
-        boolean successfull = chatManager.leaveSession(chatParticipator);
-        if (successfull) {
+        boolean successful = chatManager.leaveSession(chatParticipator);
+        if (successful) {
             ChatPage toBeClosed = chatPageHashMap.remove(chatParticipator);
             toBeClosed.setVisible(false);
             toBeClosed.dispose();
@@ -231,6 +230,9 @@ public class UIManager implements UIManagerInterface {
             friends.put(friendName, cst);
         }
     }
+
+    @Override
+    public void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception { }
 
     //endregion
 

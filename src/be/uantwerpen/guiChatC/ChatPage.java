@@ -45,7 +45,6 @@ public class ChatPage extends JFrame {
     //offline chatsessie
     public ChatPage(String chatName, UIManagerInterface uiManagerInterface, IChatSession ics) throws RemoteException {
         super(chatName);
-        lblMe.setText(chatParticipator.getUserName());
         this.uiManagerInterface = uiManagerInterface;
         try {
             ArrayList<String> messages = uiManagerInterface.getMessages(ics);

@@ -77,8 +77,11 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public void notifyParticipators(ChatNotificationType cnt, ChatParticipatorKey cpk) throws RemoteException {
-        if (cpk.equals(chatHost)) return;
-        if (cpk.getParticipator() != null & cpk.getParticipator().isServer()) return;
+        if (cpk.equals(chatHost)) {
+            System.out.println(cpk.getUserName() + " is the host...");
+            return;
+        }
+        if (cpk.getParticipator() == null) return;
         new Thread(new DeliveryAgent(participators, cpk, cnt)).start();
         chooseChatName();
     }
@@ -91,6 +94,7 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
      */
     @Override
     public synchronized boolean joinSession(IChatParticipator participator, boolean host) throws RemoteException {
+        System.out.println(participator.isServer());
         ChatParticipatorKey cpk = new ChatParticipatorKey(participator.getUserName(), participator, host);
         if (participators.contains(cpk)) return true; //already in chat
         participators.add(cpk);
@@ -111,9 +115,11 @@ public class ChatSession extends UnicastRemoteObject implements IChatSession {
 
     @Override
     public boolean leaveSession(String username) throws RemoteException {
+        System.out.println(username + " wants to leave");
         for (ChatParticipatorKey cpk : participators) {
             if (cpk.getUserName().equalsIgnoreCase(username)) {
                 notifyParticipators(ChatNotificationType.USERLEFT, cpk);
+                System.out.println(cpk.getUserName() + " left...");
                 return true;
             }
         }

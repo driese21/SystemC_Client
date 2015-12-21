@@ -28,4 +28,6 @@ public interface IChatManager {
     void notifyView(ClientStatusType cnt, String friendName);
 
     boolean leaveSession(ChatParticipator chatParticipator) throws RemoteException;
+
+    void tryRecoverChat(ChatParticipator chatParticipator, String msg) throws Exception;
 }
