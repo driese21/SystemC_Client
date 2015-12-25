@@ -52,7 +52,7 @@ public class DiscoveryManager extends Thread implements IDiscoveryManager {
     }
 
     /**
-     * Retrives the information from the reply from the server
+     * Retrieves the information from the reply from the server
      * @param reply answer from the server
      * @throws InterruptedException
      * @throws RemoteException
